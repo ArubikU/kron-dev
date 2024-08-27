@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.layout-container {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.content {
+  padding: 20px;
+}
+
+/* Ensure proper behavior for focus outlines and keyboard navigation */
+:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Improve visibility of scrollbars for accessibility */
+.layout-container::-webkit-scrollbar {
+  width: 12px;
+}
+
+.layout-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px;
+}
+
+.layout-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
