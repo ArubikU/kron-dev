@@ -21,6 +21,7 @@ export interface IUser {
     getRekrons(): string[];
     addRekron(post: IKron): void;
     getMarkers(): string[];
+    setMarker(markers: string[]) : void;
     addMarker(post: IKron): void;
     removeMarker(post: IKron): void;
 }
@@ -69,6 +70,13 @@ export interface IKronGroup {
     getKrons(): string[];
     addKron(kronId: string): void;
     setDescription(desc: string): void;
+    setPrivate(state: boolean): void;
+    isPublic(): boolean;
+}
+
+export class Tag {
+    tag: string;
+    amount: number;
 }
 
 export interface IServerData {
@@ -87,8 +95,16 @@ export interface IServerData {
     updateKronUser(user: IUser): void;
     getAllKrons(): { id: string, kron: IKron }[];
     getKron(id: string): IKron | undefined;
+    getUser(id: string): IUser | undefined;
+    getGroup(id: string): IKronGroup | undefined;
     getAllUsers(): { id: string, user: IUser }[];
     getAllGroups(): { id: string, kronGroup: IKronGroup }[];
+    getSuggestedTags(): string[];
+    pushTag(tag: string[]): void;
+
+    filterUsers(searchTerm: string): IUser[];
+    filterPosts(searchTerm: string): IKron[];
+    filterGroups(searchTerm: string): IKronGroup[];
 }
 
 export interface IServerDataBuilder {
@@ -103,8 +119,9 @@ export class LocalData {
     private user: ILocalUser;
     private currentKrons: string[];
 
-
     public activeView: string = "home";
+    public searchTerm: string = "";
+    public activeSearchTab: string = "posts";
     public selectedGroup: IKronGroup | null
     public selectedUser: IUser| null
     public copiedKronId: string | null
@@ -115,7 +132,24 @@ export class LocalData {
     public activeComments: string | null;
     public newComment: string;
 
+    setActiveSearchTab(searchtTab: string): void{
+        this.activeSearchTab = searchtTab;
+      }
+
+    getTittle(): string{
+        switch(this.activeView){
+            case("home"): {return "Feed"}
+            case("explore"): {return "Search"}
+            case("group"): {return "Groups"}
+            case("profile"): {return "Profile"}
+            case("following"): {return "Fans"}
+        }
+        return "Feed";
+    }
   
+    setSearchTerm(searchTerm: string): void{
+        this.searchTerm = searchTerm;
+      }
     setActiveView(view: string): void{
       this.activeView = view;
     }

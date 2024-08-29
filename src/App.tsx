@@ -4,6 +4,7 @@ import {
   CheckIcon,
   FlameKindling,
   FolderIcon,
+  HashIcon,
   HeartIcon,
   HomeIcon,
   ImageIcon,
@@ -43,13 +44,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../src/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../src/components/ui/tabs";
 import { Textarea } from "../src/components/ui/textarea";
 
 import { buttonColors, mbtiColors } from "../src/objects/colors";
 import { ILocalUser, IKronGroup as KronGroup, IKron as KronPost, IUser as KronUser, LocalData, IServerDataBuilder as ServerDataBuilder } from "../src/objects/server/interface";
 import * as LocalKron from "../src/objects/server/json-impl";
+import KronImages from "./components/image/kronImage";
+import { formatTimestamp } from "./lib/utils";
 
-const localUserExample: ILocalUser =new LocalKron.LocalJsonUser({
+const localUserExample: ILocalUser =new LocalKron.LocalKronUser({
   id: "1234-1234-1234-1234",
   name: "John Doe",
   tag: "@johndoe",
@@ -62,7 +71,7 @@ const localUserExample: ILocalUser =new LocalKron.LocalJsonUser({
   following: []}
 );
 const starTrekUsers: KronUser[] = [
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "James Kirk",
     tag: "@captainkirk",
@@ -73,7 +82,7 @@ const starTrekUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Spock",
     tag: "@spock",
@@ -84,7 +93,7 @@ const starTrekUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Leonard McCoy",
     tag: "@bones",
@@ -95,7 +104,7 @@ const starTrekUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Jean-Luc Picard",
     tag: "@picard",
@@ -106,7 +115,7 @@ const starTrekUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Beverly Crusher",
     tag: "@crusher",
@@ -117,7 +126,7 @@ const starTrekUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Worf",
     tag: "@worf",
@@ -130,7 +139,7 @@ const starTrekUsers: KronUser[] = [
   })
 ];
 const starWarsUsers: KronUser[] = [
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Luke Skywalker",
     tag: "@luke",
@@ -141,7 +150,7 @@ const starWarsUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Leia Organa",
     tag: "@leia",
@@ -152,7 +161,7 @@ const starWarsUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Han Solo",
     tag: "@han",
@@ -163,7 +172,7 @@ const starWarsUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Obi-Wan Kenobi",
     tag: "@obiwan",
@@ -174,7 +183,7 @@ const starWarsUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Darth Vader",
     tag: "@vader",
@@ -185,7 +194,7 @@ const starWarsUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Yoda",
     tag: "@yoda",
@@ -199,7 +208,7 @@ const starWarsUsers: KronUser[] = [
 ];
 
 const disneyUsers: KronUser[] = [
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Mickey Mouse",
     tag: "@mickey",
@@ -210,7 +219,7 @@ const disneyUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Donald Duck",
     tag: "@donald",
@@ -221,7 +230,7 @@ const disneyUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Goofy",
     tag: "@goofy",
@@ -232,7 +241,7 @@ const disneyUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Ariel",
     tag: "@ariel",
@@ -243,7 +252,7 @@ const disneyUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Simba",
     tag: "@simba",
@@ -254,7 +263,7 @@ const disneyUsers: KronUser[] = [
     followers: [],
     following: []
   }),
-  new LocalKron.JsonUser({
+  new LocalKron.KronUser({
     id: "none",
     name: "Elsa",
     tag: "@elsa",
@@ -291,111 +300,101 @@ let DisneyIds = {
   "Simba": disneyUsers[4],
   "Elsa": disneyUsers[5]
 };
-const publicPosts: LocalKron.JsonKron[] = [
-  new LocalKron.JsonKron(
+const publicPosts: LocalKron.Kron[] = [
+  new LocalKron.Kron(
     "none",
     StarWarsIds.Luke.getId(),
-    "Just finished training with Yoda. Feeling more powerful than ever! May the Force be with us all.",
+    "Just finished training with Yoda. Feeling more powerful than ever! May the Force be with us all. #StarWars #Training",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarWars", "Training"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarTrekIds.Kirk.getId(),
-    "Had a great day commanding the Enterprise. Exploring new worlds is always thrilling!",
+    "Had a great day commanding the Enterprise. Exploring new worlds is always thrilling! #StarTrek",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarTrek", "Exploration"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     DisneyIds.Mickey.getId(),
-    "Just finished a fun day at Disneyland! Hope everyone is having a magical day!",
+    "Just finished a fun day at Disneyland! Hope everyone is having a magical day! #Disney #Fun",
     new Date().toISOString(),
     [],
     [],
     [],
-    ["Disney", "Fun"]
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarWarsIds.Leia.getId(),
-    "The Rebellion is stronger than ever! Proud of our progress and excited for what's next.",
+    "The Rebellion is stronger than ever! Proud of our progress and excited for what's next. #StarWars #Rebellion",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarWars", "Rebellion"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarTrekIds.Picard.getId(),
-    "Reflecting on our latest mission. Sometimes, the journey is as important as the destination.",
+    "#StarTrek Reflecting on our latest mission. Sometimes, the journey is as important as the destination. #MirroVerse",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarTrek", "Reflections"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     DisneyIds.Elsa.getId(),
-    "Winter is coming soon! Excited to see the snow and maybe build a new ice castle.",
+    "Winter is coming soon! Excited to see the snow and maybe build a new ice castle. #Disney",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["Disney", "Winter"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarTrekIds.Spock.getId(),
-    "Logic and reason guide us through the stars. Today's mission was a success by any measure.",
+    "Logic and reason guide us through the stars. Today's mission was a success by any measure. #StarTrek #Logic",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarTrek", "Logic"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarWarsIds.Han.getId(),
-    "Just made a quick jump to light speed. Sometimes you just have to go fast!",
+    "Just made a quick jump to light speed. Sometimes you just have to go fast! #StarWars",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarWars", "Travel"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     DisneyIds.Goofy.getId(),
-    "Gawrsh! Had a great time at the park today. Always fun to hang out with friends.",
+    "Gawrsh! Had a great time at the park today. Always fun to hang out with friends. #Disney",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["Disney", "Friends"]
+    []
   ),
-  new LocalKron.JsonKron(
+  new LocalKron.Kron(
     "none",
     StarWarsIds.Yoda.getId(),
-    "Much to learn, you still have. Continue the journey, we must.",
+    "Much to learn, you still have. Continue the journey, we must. #StarWars",
     new Date().toISOString(),
     [],
     [],
-    [],
-    ["StarWars", "Wisdom"]
+    []
   )
 ];
 
 const groups: KronGroup[] = [
-  new LocalKron.JsonKronGroup(
+  new LocalKron.KronGroup(
     "none",
     "Galactic Heroes Unite",
     [
@@ -408,7 +407,7 @@ const groups: KronGroup[] = [
     ],
     [],
   ),
-  new LocalKron.JsonKronGroup(
+  new LocalKron.KronGroup(
     "none",
     "Rebels, Captains & Royals",
     [
@@ -420,7 +419,7 @@ const groups: KronGroup[] = [
     ],
     [],
   ),
-  new LocalKron.JsonKronGroup(
+  new LocalKron.KronGroup(
     "none",
     "Interstellar & Magical Diplomats",
     [
@@ -432,7 +431,7 @@ const groups: KronGroup[] = [
     ],
     [],
   ),
-  new LocalKron.JsonKronGroup(
+  new LocalKron.KronGroup(
     "none",
     "Space Adventurers & Dreamers",
     [
@@ -444,7 +443,7 @@ const groups: KronGroup[] = [
     ],
     [],
   ),
-  new LocalKron.JsonKronGroup(
+  new LocalKron.KronGroup(
     "none",
     "Heroes of the Multiverse",
     [
@@ -458,7 +457,7 @@ const groups: KronGroup[] = [
   )
 ];
 
-const groupPosts: LocalKron.JsonKron[] = [
+const groupPosts: LocalKron.Kron[] = [
 ]
 
 groups[0].addMember(localUserExample.getId())
@@ -466,7 +465,7 @@ groups[0].addMember(localUserExample.getId())
 groups.forEach(group =>{
   group.getMembers().forEach(memberId =>{
     
-    let tempKron = new LocalKron.JsonKron(
+    let tempKron = new LocalKron.Kron(
       "none",
       memberId,
       "I just joined to "+group.getName(),
@@ -479,8 +478,6 @@ groups.forEach(group =>{
     groupPosts.push(tempKron);
   })
 })
-console.log(groups)
-console.log(groupPosts)
 const BuilderServer: ServerDataBuilder = new LocalKron.JsonServerDataBuilder();
 BuilderServer.addUser(localUserExample,localUserExample.getTag());
 starTrekUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
@@ -497,7 +494,7 @@ export default function Component() {
   let serverData = serverDataT;
 
   const [render, forceRender] = React.useState(1);
-
+  console.log(window.location.href)
 
   function update(local,server){
     updateLocal(local)
@@ -508,7 +505,7 @@ export default function Component() {
     console.log(server)
     forceRender(render+1)
   }
-  
+
 
 
   const KronicleLogo = () => (
@@ -595,8 +592,8 @@ export default function Component() {
       localData.setNewKronImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        //setNewKronImagePreview(reader.result);
-        //TODO
+        localData.setNewKronImagePreview(reader.result);
+        update(localData,serverData)
       };
       reader.readAsDataURL(file);
     }
@@ -604,7 +601,7 @@ export default function Component() {
 
   const handlePostKron = () => {
     if (localData.newKronContent.trim() || localData.newKronImage) {
-      const kronBuilder = new LocalKron.JsonKron(
+      const kronBuilder = new LocalKron.Kron(
         "none",
         localData.getUser().getId(),
         localData.newKronContent,
@@ -628,28 +625,35 @@ export default function Component() {
     }
   };
 
-  const handleKronActions = (action, kronId: string): boolean => {
+  const handleKronActions = (action, kron: KronPost): boolean => {
     switch(action){
       case "Comment":{
-        localData.setActiveComments(localData.activeComments === kronId ? null : kronId);
+        localData.setActiveComments(localData.activeComments === kron.getId() ? null : kron.getId());
         break
       }
       case "ReKron": {
+
+        localData.getUser().addRekron(kron)
+        kron.reKron(localData.getUser())
+
         break
       }
       case "Like": {
-        let kt = serverData.getKron(kronId);
-        if(kt){
-          if(kt.liking(localData.getUser())){
-            kt.unlike(localData.getUser())
+        if(kron){
+          if(kron.liking(localData.getUser())){
+            kron.unlike(localData.getUser())
           }else{
-            kt.like(localData.getUser())
+            kron.like(localData.getUser())
           }
         }
         break
       }
       case "Save": {
-        break
+        if(localData.getUser().getMarkers().includes(kron.getId())){
+          localData.getUser().removeMarker(kron)
+        }else{
+          localData.getUser().addMarker(kron)
+        }
       }
     }
     return true;
@@ -660,7 +664,7 @@ export default function Component() {
       const kron = serverData.getAllKrons().find((k) => k.id === kronId)?.kron;
       if (kron) {
         
-      const kronBuilder = new LocalKron.JsonKron(
+      const kronBuilder = new LocalKron.Kron(
         "none",
         localData.getUser().getId(),
         localData.newKronContent,
@@ -683,7 +687,8 @@ export default function Component() {
   };
 
   const handleCopyKronUrl = (kronId: string) => {
-    const url = `${window.location.origin}/kron/${kronId}`;
+    
+    const url = `${window.location.origin}/kron/id=${kronId}`;
     navigator.clipboard.writeText(url);
     localData.setCopiedKronId(kronId);
     setTimeout(() => {localData.setCopiedKronId("")
@@ -695,13 +700,13 @@ export default function Component() {
     return (
       <div className="mt-2 relative">
         <button
-          className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1"
+          className="text-white p-1"
           onClick={() => {localData.setNewKronImagePreview("")
             update(localData,serverData)
           }}
         >
-        <img src={url} alt="Preview" className="max-w-full h-auto rounded-lg" />
-          <XIcon className="h-4 w-4" />
+        <img src={url} alt="Preview" className="max-w-full h-auto" />
+          <XIcon className="h-4 w-4 mt-2 relative" />
         </button>
       </div>
     );
@@ -732,12 +737,86 @@ export default function Component() {
   }
 
   const showKronStatClass=(action)=>{
-    if(action.name==="Save"){
-      return "h-5 w-5";
+    if(action.name==="Save" && (action.count > 0)){
+      return "h-5 w-5 fill-white";
     }
-    return (action.count <= 0) ? "h-5 w-5 ": "h-5 w-5 mr-1";
+    return (action.count <= 0) ? "h-5 w-5 ": "h-5 w-5 mr-1 fill-white";
   }
-  const renderKron = (kron: KronPost, index, config: {showFollowing: boolean} = {showFollowing: true}) => {
+
+  const normalWord = (word: string) => (<span className="text-[#FFF6E9] inline"> {word} </span>);
+  const tagWord = (word: string) => (<button className="text-blue-400 text-sm inline" onClick={(e)=>{
+    localData.setActiveView("explore")
+    localData.setSearchTerm(word)
+    update(localData,serverData)
+  }}> {word} </button>);
+
+  const hrlink = (word: string)=>(<a className="text-blue-400 text-sm inline" href={word}> {word} </a>)
+
+  const renderCarousel = (words: string[]) => {
+    let images = words.filter(word =>{
+      if(word.includes("blob:"))  {
+        return true;
+      }
+      if(word.match(/https?:\/\/[^\s]+/)== null)  {
+        return false;
+      }
+      if (word.includes("youtube.com") || word.includes("youtu.be")) {
+        return true;
+      }
+      if(word.match(/\.(jpeg|jpg|gif|png|webp|mp4)$/) == null &&
+    word.match(/format=(jpeg|jpg|gif|png|webp|mp4)/)== null ){
+        return false;
+      };
+      return word;
+    })
+
+    if(images.length == 0){
+      return (<span></span>);
+    }
+    return(KronImages(images))
+  }
+
+  const renderKronContent = (kron: KronPost) => {
+    // Split the content into words
+    let kronContent = kron.getContent().replace(/(?:\r\n|\r|\n)/g, '  ');
+    let words = kronContent.split(' ');
+    let wordsWithImage= words;
+    let kronImage = kron.getImage();
+    if(kronImage){
+      wordsWithImage.push(kronImage)
+    }
+    console.log(wordsWithImage)
+    return (
+      <div>
+        {words.map((word, index) => {
+          if (word.startsWith('#')) {
+            return tagWord(word);
+          } else if (word.match(/https?:\/\/[^\s]+/)) {
+            if (word.includes("youtube.com") || word.includes("youtu.be")) {
+              return hrlink(word);
+            } else if (word.match(/\.(jpeg|jpg|gif|png|webp|mp4)$/) !== null) {
+              return hrlink(word);
+            } else {
+              return hrlink(word);
+            }
+          } else {
+            return normalWord(word);
+          }
+        })}
+
+      {renderCarousel(wordsWithImage)}
+      </div>
+    );
+  };
+  
+
+  class kronConfig {
+    showFollowing?: Boolean;
+    showAvatar?: Boolean;
+    showTag?: Boolean;
+    showTime?: boolean;
+  }
+  const renderKron = (kron: KronPost, index, config: kronConfig= {showFollowing: true,showAvatar: true,showTag: true,showTime: true}) => {
     const user: KronUser =
       serverData.getAllUsers().find((u) => u.user.getId() === kron.getUserId())?.user ||
       localData.getUser();
@@ -747,20 +826,17 @@ export default function Component() {
         className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
       >
         <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center">
-            <div className="relative mr-2">
-              <Avatar className="w-10 h-10 border-2 border-[#FCAE1E]">
-                <AvatarImage src={user.getAvatar()} alt={user.getName()} />
-                <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
-              <StatusIndicator status={user.getStatus()} isInteractable={user.getId() === localData.getUser().getId()} />
-              <MbtiOverlay mbti={user.getMbti()} />
-            </div>
-            <div>
-              <p className="font-bold text-[#FFF6E9]">{user.getName()}</p>
-              <p className="text-sm text-[#FFF6E9]/60">{user.getTag()}</p>
-            </div>
-          </div>
+          {(config.showAvatar || config.showTag) && (<div className="flex items-center">
+            
+            {config.showAvatar && (<div className="relative mr-2"><Avatar className="w-10 h-10 border-2 border-[#FCAE1E]">
+              <AvatarImage src={user.getAvatar()} alt={user.getName()} />
+              <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar><StatusIndicator status={user.getStatus()} isInteractable={user.getId() === localData.getUser().getId()} /><MbtiOverlay mbti={user.getMbti()} /></div>)}
+          
+          
+            {config.showTag && (<div><span className="font-bold text-[#FFF6E9]">{user.getName()}</span> {config.showTime && (<span className="text-sm text-[#FFF6E9]/60">{formatTimestamp(kron.getTimestamp())}</span>)}<p className="text-sm text-[#FFF6E9]/60">{user.getTag()}</p></div>)}
+          
+        </div>)}
           {user.getId() !== localData.getUser().getId() 
           && config?.showFollowing
           && (
@@ -785,26 +861,7 @@ export default function Component() {
           )}
         </CardHeader>
         <CardContent>
-          <p className="text-[#FFF6E9]">{kron.getContent()}</p>
-          {kron.getImage() && (
-            <img
-              src={kron.getImage()}
-              alt="Kron image"
-              className="mt-2 rounded-lg"
-            />
-          )}
-          {!kron.getImage() &&
-            kron.getContent().match(/https?:\/\/[^\s]+/) &&
-            renderUrlPreview(kron.getContent().match(/https?:\/\/[^\s]+/))}
-          {kron.getTags().length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {kron.getTags().map((tag, index) => (
-                <span key={index} className="text-blue-400 text-sm">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+          {renderKronContent(kron)}
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <div className="flex gap-4">
@@ -816,8 +873,8 @@ export default function Component() {
               },
               { name: "ReKron", icon: FlameKindling, count: kron.getRekrons().length },
               { name: "Like", icon: HeartIcon, count: kron.getLikes().length },
-              { name: "Save", icon: BookmarkIcon, count: kron.getRekrons().filter(
-                (k)=>k===localData.getUser().getId()
+              { name: "Save", icon: BookmarkIcon, count: localData.getUser().getMarkers().filter(
+                (k)=>k===kron.getId()
               ).length },
             ].map((action, actionIndex) => (
               <Button
@@ -830,7 +887,7 @@ export default function Component() {
                   } bg-opacity-50 hover:bg-opacity-75`}
                 aria-label={action.name}
                 onClick={(e) =>{
-                  handleKronActions(action.name,kron.getId())
+                  handleKronActions(action.name,kron)
                   update(localData,serverData)
                 }
                 }
@@ -859,7 +916,7 @@ export default function Component() {
           <div className="px-4 pb-4">
             <Input
               placeholder="Add a comment..."
-              onChange={(e) => {localData.setNewComment(e.target.value)
+              onChange={(e) => {localData.setNewComment((e.target as HTMLInputElement).value)
                 update(localData,serverData)
               }}
               value={localData.newComment}
@@ -903,6 +960,114 @@ export default function Component() {
     );
   };
 
+  const renderUser = (user: KronUser, config?: kronConfig) => {
+    return (<div key={user.getId()} className="mb-4 flex items-center">
+    <Button
+      variant="ghost"
+      className={``}
+      onClick={() => {localData.setActiveView("profile")
+        localData.setSelectedUser(user)
+        update(localData,serverData)
+      }}
+    >
+      <Avatar className="w-12 h-12 mr-4">
+        <AvatarImage src={user.getAvatar()} alt={user.getName()} />
+        <AvatarFallback>
+          {user.getName()
+            .split(" ")
+            .map((n) => n[0])
+            .join("")}
+        </AvatarFallback>
+      </Avatar>
+      </Button>
+      <div>
+        <p className="font-bold">{user.getName()}</p>
+        <p className="text-[#FFF6E9]/60">{user.getTag()}</p>
+      </div>
+    </div>)
+  }
+  const renderExploreContent = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <SearchIcon className="text-[#FFF6E9]/60" />
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="flex-grow bg-[#FFF6E9]/10 border-[#FFF6E9]/20 text-[#FFF6E9] placeholder-[#FFF6E9]/60"
+            onChange={(e)=>{
+              localData.setSearchTerm(e.target.value)
+              update(localData,serverData)
+            }}
+            value={localData.searchTerm}
+          />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Suggested Tags</h3>
+          <div className="flex flex-wrap gap-2">
+            {serverData.getSuggestedTags().map((tag, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="bg-[#FFF6E9]/10 hover:bg-[#FFF6E9]/20 text-[#FFF6E9]"
+                onClick={() => {
+                  localData.setSearchTerm(localData.searchTerm+" "+tag)
+                  update(localData,serverData)
+                }}
+              >
+                <HashIcon className="w-4 h-4 mr-1" />
+                {tag}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Tabs onValueChange={(e)=>{
+          localData.setActiveSearchTab(e);
+          update(localData,serverData)
+        }} value={localData.activeSearchTab} >
+          <TabsList className="bg-[#960018]/60">
+            <TabsTrigger value="posts" className="text-[#FFF6E9]">Posts</TabsTrigger>
+            <TabsTrigger value="users" className="text-[#FFF6E9]">Users</TabsTrigger>
+            <TabsTrigger value="groups" className="text-[#FFF6E9]">Groups</TabsTrigger>
+          </TabsList>
+          <TabsContent value="posts">
+            {serverData.filterPosts(localData.searchTerm).filter(kron =>{
+          return !kron.isCommentKron() && !kron.isGroupKron()
+        }).map((kron, index) => renderKron(kron, index))}
+          </TabsContent>
+          <TabsContent value="users">
+            {serverData.filterUsers(localData.searchTerm).map((user, index) => (
+              <Card key={index} className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20">
+                <CardHeader className="flex flex-row items-center">
+                  <Avatar className="w-10 h-10 mr-2">
+                    <AvatarImage src={user.getAvatar()} alt={user.getName()} />
+                    <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-semibold">{user.getName()}</h3>
+                    <p className="text-sm text-[#FFF6E9]/60">{user.getTag()}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </TabsContent>
+          <TabsContent value="groups">
+            {serverData.filterGroups(localData.searchTerm).map((group, index) => (
+              <Card key={index} className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20">
+                <CardHeader>
+                  <h3 className="font-semibold">{group.getName()}</h3>
+                  <p className="text-sm text-[#FFF6E9]/60">{group.getMembers().length} members</p>
+                </CardHeader>
+              </Card>
+            ))}
+          </TabsContent>
+        </Tabs>
+      </div>
+    )
+  }
   const renderContent = () => {
     switch (localData.activeView) {
       case "home":
@@ -918,12 +1083,36 @@ export default function Component() {
           return serverData.getGroupKrons(localData.selectedGroup).map((kron, index) => renderKron(kron, index));
         }
         return <p>Select a group to view krons</p>;
+      case "bookmarks":
+        let userKrons = serverData.getAllKrons().filter(
+          (kron) => localData.getUser().getMarkers().includes(kron.id)
+        );
+        userKrons=userKrons.filter((k)=>{
+          if(k.kron.getGroupId() != undefined){
+            let id: string = k.kron.getGroupId()+"";
+          return serverData.getGroup(id)?.getMembers().includes(localData.getUser().getId())
+          }
+          return true;
+        })
+        return userKrons.map((kron, index) =>
+          renderKron(kron.kron, index)
+        );
+
       case "profile":
         if (localData.selectedUser) {
           let selUser: KronUser = localData.selectedUser;
-          const userKrons = serverData.getAllKrons().filter(
-            (kron) => kron.kron.getUserId() === selUser.getId()
+          let userKrons = serverData.getAllKrons().filter(
+            (kron) => kron.kron.getUserId() === selUser.getId()||localData.selectedUser?.getRekrons().includes(kron.id)
           );
+          if(localData.selectedUser.getId()!=localData.getUser().getId()){
+            userKrons=userKrons.filter((k)=>{
+              if(k.kron.getGroupId() != undefined){
+                let id: string = k.kron.getGroupId()+"";
+              return serverData.getGroup(id)?.getMembers().includes(localData.getUser().getId())
+              }
+              return true;
+            })
+          }
           return (
             <div>
               <div className="mb-4 flex items-center">
@@ -944,49 +1133,26 @@ export default function Component() {
                   <p className="text-[#FFF6E9]/60">{selUser.getTag()}</p>
                 </div>
               </div>
-              {userKrons.map((kron, index) => renderKron(kron.kron, index,{showFollowing: false}))}
+              {userKrons.map((kron, index) => renderKron(kron.kron, index,{showFollowing: false,showTag: true,showAvatar:true,showTime: true}))}
             </div>
           );
         }
         return <p>Select a user to view their profile</p>;
       case "following":
-        var followingUsers: {user,id}[] = [];
+        var followingUsers: KronUser[] = [];
         serverData.getAllUsers().forEach((k)=>{
           if(localData.getUser().getFollowing().includes(k.user.getId())){
-            followingUsers.push(k)
+            followingUsers.push(k.user)
           }
         })
         return (
           <div>
             <h2 className="text-2xl font-bold mb-4">Following</h2>
-            {followingUsers.map((user) => (
-              <div key={user.id} className="mb-4 flex items-center">
-              <Button
-                variant="ghost"
-                className={``}
-                onClick={() => {localData.setActiveView("profile")
-                  localData.setSelectedUser(user.user)
-                  update(localData,serverData)
-                }}
-              >
-                <Avatar className="w-12 h-12 mr-4">
-                  <AvatarImage src={user.user.getAvatar()} alt={user.user.getName()} />
-                  <AvatarFallback>
-                    {user.user.getName()
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                </Button>
-                <div>
-                  <p className="font-bold">{user.user.getName()}</p>
-                  <p className="text-[#FFF6E9]/60">{user.user.getTag()}</p>
-                </div>
-              </div>
-            ))}
+            {followingUsers.map((u) => renderUser(u))}
           </div>
         );
+      case "explore":
+          return renderExploreContent()
       default:
         return <p>Select a view</p>;
     }
@@ -1129,7 +1295,7 @@ export default function Component() {
       <div className="flex-1 overflow-auto">
         {/* Header */}
         <header className="bg-[#960018]/80 backdrop-blur-md text-[#FFF6E9] p-4 sticky top-0 z-10">
-          <h1 className="text-xl font-bold">Kronicle Feed</h1>
+          <h1 className="text-xl font-bold">{"Kronicle "+localData.getTittle()}</h1>
         </header>
 
         {/* Kron input */}
@@ -1147,8 +1313,8 @@ export default function Component() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => {handleImageUpload(e)
-                update(localData,serverData)
+              onChange={(e) => {
+                handleImageUpload(e)
               }}
               className="hidden"
               id="image-upload"
