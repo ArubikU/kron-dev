@@ -1,3 +1,7 @@
+
+import { ThemeColors } from "../../themes/Theme";
+import * as Themes from "../../themes/Themes";
+
 export interface IUser {
     getId(): string;
     getName(): string;
@@ -119,6 +123,8 @@ export class LocalData {
     private user: ILocalUser;
     private currentKrons: string[];
 
+    private theme: ThemeColors = Themes.blackTheme;
+
     public activeView: string = "home";
     public searchTerm: string = "";
     public activeSearchTab: string = "posts";
@@ -131,10 +137,21 @@ export class LocalData {
     public newKronImagePreview: any | null;
     public activeComments: string | null;
     public newComment: string;
+    public isMenuOpen: boolean;
+    setTheme(theme: ThemeColors): void{
+        this.theme = theme;
+      }
+      getTheme(): ThemeColors{
+          return this.theme;
+    }
 
     setActiveSearchTab(searchtTab: string): void{
         this.activeSearchTab = searchtTab;
       }
+
+    setIsMenuOpen(value: boolean): void{
+        this.isMenuOpen = value;
+    }
 
     getTittle(): string{
         switch(this.activeView){

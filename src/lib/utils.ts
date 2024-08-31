@@ -41,3 +41,16 @@ export function formatTimestamp(timestamp: string): string{
   // Formatear la fecha como dd/mm/yyyy hh:mm:ss
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
+export function formatMobileTimestamp(timestamp: string): string{
+
+  const date = new Date(timestamp);
+
+  // Obtener las partes de la fecha
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+  const year = date.getFullYear();
+
+
+  // Formatear la fecha como dd/mm/yyyy hh:mm:ss
+  return `${day}/${month}/${year}`;
+}

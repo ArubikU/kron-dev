@@ -1,13 +1,11 @@
 
-export const buttonColors = [
-    { bg: "bg-[#960018]", hover: "hover:bg-[#960018]/80" },
-    { bg: "bg-[#E34234]", hover: "hover:bg-[#E34234]/80" },
-    { bg: "bg-[#FF7F50]", hover: "hover:bg-[#FF7F50]/80" },
-    { bg: "bg-[#FFA07A]", hover: "hover:bg-[#FFA07A]/80" },
-    { bg: "bg-[#FFA500]", hover: "hover:bg-[#FFA500]/80" },
-    { bg: "bg-[#FCAE1E]", hover: "hover:bg-[#FCAE1E]/80" },
-    { bg: "bg-[#FFBF00]", hover: "hover:bg-[#FFBF00]/80" },
-  ];
+export const statusColors = {
+  online: "bg-green-500",
+  offline: "bg-gray-500",
+  dnd: "bg-red-500",
+  afk: "bg-orange-500"
+}
+
 export const mbtiColors = {
     // The Analysts
     ISTJ: "#95627b",

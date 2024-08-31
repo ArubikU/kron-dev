@@ -7,6 +7,50 @@ interface KronImagesProps {
 }
 
 const KronImages = (images: string[]) => {
+  if(images.length == 1){
+    let src = images[0];
+    if(src.includes("youtube.com")||
+  src.includes("youtu.be")){
+    return(
+          <iframe
+          className="imageBackground"
+            key={src}
+            style={{
+              backgroundImage: `url(${src})`,
+            }}
+            src={`https://www.youtube.com/embed/${src.split("v=")[1].split("&")[0]}`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen />
+    )
+  }
+  
+  if(src.includes("blob:")){
+    return(
+      <button>
+      <img alt="Preview" 
+          className="imageBackground"
+            key={src}
+            style={{
+              backgroundImage: `url(${src})`,
+            }}
+            src={src}/>
+            </button>
+    )
+  }
+    return(
+    <button
+      className={globalClassName('image') + " imageBackground"}
+      key={src}
+      style={{
+        backgroundImage: `url(${src})`,
+      }}
+    >
+      {src.includes(".mp4") && <VideoButton />}
+    </button>
+  )
+
+  }
   const count = Math.min(images.length, 4);
   return (
     <div className={globalClassName('imageContainer')+ " imageContainer"}>
@@ -37,7 +81,7 @@ const KronImages = (images: string[]) => {
         }
         
         if(src.includes("blob:")){
-          return(
+          return(<button>
             <img alt="Preview" 
                 className="imageBackground"
                   key={src}
@@ -46,6 +90,7 @@ const KronImages = (images: string[]) => {
                     gridRow: count === 3 && index === 0 ? '1/3' : undefined,
                   }}
                   src={src}/>
+                  </button>
           )
         }
           return(

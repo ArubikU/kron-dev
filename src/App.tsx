@@ -1,8 +1,10 @@
+
+
 import {
   BellIcon,
   BookmarkIcon,
   CheckIcon,
-  FlameKindling,
+  FlameIcon,
   FolderIcon,
   HashIcon,
   HeartIcon,
@@ -14,484 +16,61 @@ import {
   UserPlusIcon,
   UsersIcon,
   XIcon
-} from "lucide-react";
-import * as React from "react";
+} from "lucide-react"
+import * as React from "react"
 import {
   SearchIcon
-} from "../src/components/icons";
+} from "../src/components/icons"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "../src/components/ui/avatar";
-import { Button } from "../src/components/ui/button";
+} from "../src/components/ui/avatar"
+import { Button } from "../src/components/ui/button"
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "../src/components/ui/card";
-import { Input } from "../src/components/ui/input";
+} from "../src/components/ui/card"
+import { Input } from "../src/components/ui/input"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../src/components/ui/popover";
+} from "../src/components/ui/popover"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../src/components/ui/select";
+} from "../src/components/ui/select"
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../src/components/ui/tabs";
-import { Textarea } from "../src/components/ui/textarea";
+} from "../src/components/ui/tabs"
+import { Textarea } from "../src/components/ui/textarea"
 
-import { buttonColors, mbtiColors } from "../src/objects/colors";
-import { ILocalUser, IKronGroup as KronGroup, IKron as KronPost, IUser as KronUser, LocalData, IServerDataBuilder as ServerDataBuilder } from "../src/objects/server/interface";
-import * as LocalKron from "../src/objects/server/json-impl";
-import KronImages from "./components/image/kronImage";
-import { formatTimestamp } from "./lib/utils";
+import { mbtiColors, statusColors } from "./objects/colors"
 
-const localUserExample: ILocalUser =new LocalKron.LocalKronUser({
-  id: "1234-1234-1234-1234",
-  name: "John Doe",
-  tag: "@johndoe",
-  avatar: "default",
-  status: "online",
-  mbti: "INTJ",
-  mail: "test@kron.xyz",
-  password: "bestpassword",
-  followers: [],
-  following: []}
-);
-const starTrekUsers: KronUser[] = [
-  new LocalKron.KronUser({
-    id: "none",
-    name: "James Kirk",
-    tag: "@captainkirk",
-    avatar: "default",
-    status: "online",
-    mbti: "ENTP",
-    mail: "kirk@enterprise.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Spock",
-    tag: "@spock",
-    avatar: "default",
-    status: "online",
-    mbti: "INTJ",
-    mail: "spock@enterprise.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Leonard McCoy",
-    tag: "@bones",
-    avatar: "default",
-    status: "dnd",
-    mbti: "ESFP",
-    mail: "bones@enterprise.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Jean-Luc Picard",
-    tag: "@picard",
-    avatar: "default",
-    status: "dnd",
-    mbti: "INFJ",
-    mail: "picard@enterprise.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Beverly Crusher",
-    tag: "@crusher",
-    avatar: "default",
-    status: "offline",
-    mbti: "ISFJ",
-    mail: "crusher@enterprise.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Worf",
-    tag: "@worf",
-    avatar: "default",
-    status: "online",
-    mbti: "ISTJ",
-    mail: "worf@enterprise.com",
-    followers: [],
-    following: []
-  })
-];
-const starWarsUsers: KronUser[] = [
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Luke Skywalker",
-    tag: "@luke",
-    avatar: "default",
-    status: "online",
-    mbti: "INFP",
-    mail: "luke@rebels.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Leia Organa",
-    tag: "@leia",
-    avatar: "default",
-    status: "online",
-    mbti: "ENFJ",
-    mail: "leia@rebels.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Han Solo",
-    tag: "@han",
-    avatar: "default",
-    status: "dnd",
-    mbti: "ESTP",
-    mail: "han@smugglers.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Obi-Wan Kenobi",
-    tag: "@obiwan",
-    avatar: "default",
-    status: "dnd",
-    mbti: "INFJ",
-    mail: "obiwan@jedi.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Darth Vader",
-    tag: "@vader",
-    avatar: "default",
-    status: "offline",
-    mbti: "INTJ",
-    mail: "vader@empire.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Yoda",
-    tag: "@yoda",
-    avatar: "default",
-    status: "online",
-    mbti: "ISTJ",
-    mail: "yoda@jedi.com",
-    followers: [],
-    following: []
-  })
-];
+import { IKron as KronPost, IUser as KronUser, LocalData } from "../src/objects/server/interface"
+import * as LocalKron from "../src/objects/server/json-impl"
+import { formatTimestamp } from "./lib/utils"
+import * as Example from "./objects/exampledata"
 
-const disneyUsers: KronUser[] = [
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Mickey Mouse",
-    tag: "@mickey",
-    avatar: "default",
-    status: "online",
-    mbti: "ESFP",
-    mail: "mickey@disney.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Donald Duck",
-    tag: "@donald",
-    avatar: "default",
-    status: "online",
-    mbti: "ESTP",
-    mail: "donald@disney.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Goofy",
-    tag: "@goofy",
-    avatar: "default",
-    status: "dnd",
-    mbti: "ISFP",
-    mail: "goofy@disney.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Ariel",
-    tag: "@ariel",
-    avatar: "default",
-    status: "dnd",
-    mbti: "INFP",
-    mail: "ariel@disney.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Simba",
-    tag: "@simba",
-    avatar: "default",
-    status: "offline",
-    mbti: "ENFJ",
-    mail: "simba@disney.com",
-    followers: [],
-    following: []
-  }),
-  new LocalKron.KronUser({
-    id: "none",
-    name: "Elsa",
-    tag: "@elsa",
-    avatar: "default",
-    status: "online",
-    mbti: "INTJ",
-    mail: "elsa@disney.com",
-    followers: [],
-    following: []
-  })
-];
+import * as KronUtils from "./lib/KronUtils"
+import { kronConfig } from "./lib/KronUtils"
 
-let StarWarsIds = {
-  "Luke": starWarsUsers[0],
-  "Leia": starWarsUsers[1],
-  "Han": starWarsUsers[2],
-  "Obi-Wan": starWarsUsers[3],
-  "Vader": starWarsUsers[4],
-  "Yoda": starWarsUsers[5]
-};
-let StarTrekIds = {
-  "Kirk": starTrekUsers[0],
-  "Spock": starTrekUsers[1],
-  "McCoy": starTrekUsers[2],
-  "Picard": starTrekUsers[3],
-  "Crusher": starTrekUsers[4],
-  "Worf": starTrekUsers[5]
-};
-let DisneyIds = {
-  "Mickey": disneyUsers[0],
-  "Donald": disneyUsers[1],
-  "Goofy": disneyUsers[2],
-  "Ariel": disneyUsers[3],
-  "Simba": disneyUsers[4],
-  "Elsa": disneyUsers[5]
-};
-const publicPosts: LocalKron.Kron[] = [
-  new LocalKron.Kron(
-    "none",
-    StarWarsIds.Luke.getId(),
-    "Just finished training with Yoda. Feeling more powerful than ever! May the Force be with us all. #StarWars #Training",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarTrekIds.Kirk.getId(),
-    "Had a great day commanding the Enterprise. Exploring new worlds is always thrilling! #StarTrek",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    DisneyIds.Mickey.getId(),
-    "Just finished a fun day at Disneyland! Hope everyone is having a magical day! #Disney #Fun",
-    new Date().toISOString(),
-    [],
-    [],
-    [],
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarWarsIds.Leia.getId(),
-    "The Rebellion is stronger than ever! Proud of our progress and excited for what's next. #StarWars #Rebellion",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarTrekIds.Picard.getId(),
-    "#StarTrek Reflecting on our latest mission. Sometimes, the journey is as important as the destination. #MirroVerse",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    DisneyIds.Elsa.getId(),
-    "Winter is coming soon! Excited to see the snow and maybe build a new ice castle. #Disney",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarTrekIds.Spock.getId(),
-    "Logic and reason guide us through the stars. Today's mission was a success by any measure. #StarTrek #Logic",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarWarsIds.Han.getId(),
-    "Just made a quick jump to light speed. Sometimes you just have to go fast! #StarWars",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    DisneyIds.Goofy.getId(),
-    "Gawrsh! Had a great time at the park today. Always fun to hang out with friends. #Disney",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  ),
-  new LocalKron.Kron(
-    "none",
-    StarWarsIds.Yoda.getId(),
-    "Much to learn, you still have. Continue the journey, we must. #StarWars",
-    new Date().toISOString(),
-    [],
-    [],
-    []
-  )
-];
-
-const groups: KronGroup[] = [
-  new LocalKron.KronGroup(
-    "none",
-    "Galactic Heroes Unite",
-    [
-      StarWarsIds.Luke.getId(),
-      StarWarsIds.Leia.getId(),
-      DisneyIds.Mickey.getId(),
-      DisneyIds.Elsa.getId(),
-      StarTrekIds.Kirk.getId(),
-      StarTrekIds.Spock.getId()
-    ],
-    [],
-  ),
-  new LocalKron.KronGroup(
-    "none",
-    "Rebels, Captains & Royals",
-    [
-      StarWarsIds.Leia.getId(),
-      StarTrekIds.Picard.getId(),
-      DisneyIds.Ariel.getId(),
-      DisneyIds.Goofy.getId(),
-      StarTrekIds.Worf.getId()
-    ],
-    [],
-  ),
-  new LocalKron.KronGroup(
-    "none",
-    "Interstellar & Magical Diplomats",
-    [
-      StarWarsIds["Obi-Wan"].getId(),
-      StarWarsIds.Yoda.getId(),
-      DisneyIds.Simba.getId(),
-      DisneyIds.Ariel.getId(),
-      StarTrekIds.Picard.getId()
-    ],
-    [],
-  ),
-  new LocalKron.KronGroup(
-    "none",
-    "Space Adventurers & Dreamers",
-    [
-      StarWarsIds.Han.getId(),
-      StarTrekIds.Kirk.getId(),
-      DisneyIds.Donald.getId(),
-      DisneyIds.Elsa.getId(),
-      StarTrekIds.McCoy.getId()
-    ],
-    [],
-  ),
-  new LocalKron.KronGroup(
-    "none",
-    "Heroes of the Multiverse",
-    [
-      StarWarsIds.Luke.getId(),
-      DisneyIds.Mickey.getId(),
-      StarTrekIds.Spock.getId(),
-      DisneyIds.Goofy.getId(),
-      StarTrekIds.Worf.getId()
-    ],
-    [],
-  )
-];
-
-const groupPosts: LocalKron.Kron[] = [
-]
-
-groups[0].addMember(localUserExample.getId())
-
-groups.forEach(group =>{
-  group.getMembers().forEach(memberId =>{
-    
-    let tempKron = new LocalKron.Kron(
-      "none",
-      memberId,
-      "I just joined to "+group.getName(),
-      new Date().toISOString(),
-      [],
-      [],
-      [],
-    )
-    tempKron.setGroupId(group.getId());
-    groupPosts.push(tempKron);
-  })
-})
-const BuilderServer: ServerDataBuilder = new LocalKron.JsonServerDataBuilder();
-BuilderServer.addUser(localUserExample,localUserExample.getTag());
-starTrekUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
-starWarsUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
-disneyUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
-const serverDataState = BuilderServer.build();
-groups.forEach(g => serverDataState.addGroup(g));
-publicPosts.forEach(p => serverDataState.postKron(p));
-groupPosts.forEach(p => serverDataState.postKron(p));
 export default function Component() {
-  const [localDataT,updateLocal] = React.useState(new LocalData(localUserExample,[]));
+  const [localDataT,updateLocal] = React.useState(new LocalData(Example.localUserExample,[]));
   let localData = localDataT;
-  const [serverDataT,updateServer] = React.useState(serverDataState);
+  const [serverDataT,updateServer] = React.useState(Example.serverDataState);
   let serverData = serverDataT;
+
+  let KronicleLogo = localData.getTheme().logo
 
   const [render, forceRender] = React.useState(1);
   console.log(window.location.href)
@@ -501,6 +80,7 @@ export default function Component() {
     updateServer(server)
     localData = local;
     serverData = server;
+    KronicleLogo = localData.getTheme().logo
     console.log(local)
     console.log(server)
     forceRender(render+1)
@@ -508,32 +88,11 @@ export default function Component() {
 
 
 
-  const KronicleLogo = () => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect width="40" height="40" rx="20" fill="#FCAE1E" />
-      <path
-        d="M10 30V10H15L20 15L25 10H30V30H25V17.5L20 22.5L15 17.5V30H10Z"
-        fill="#960018"
-      />
-    </svg>
-  );
 
   const StatusIndicator = ({ status, isInteractable = true }) => {
-    const statusColors = {
-      online: "bg-green-500",
-      offline: "bg-gray-500",
-      dnd: "bg-red-500",
-      afk: "bg-orange-500"
-    }
-
+  
     const indicator = (
-      <div className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 border-[#960018] transform translate-x-1/3 translate-y-1/3 z-10`} />
+      <div className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 ${localData.getTheme().borderMainColor} transform translate-x-1/3 translate-y-1/3 z-10`} />
     )
 
     return isInteractable ? (
@@ -546,25 +105,24 @@ export default function Component() {
             update(localData,serverData)
           }
           }>
-            <SelectTrigger className=" bg-[#960018] rounded-md border-transparent" style={{color: "#FFBF00"}} >
-             <SelectValue placeholder="Set status" />
+            <SelectTrigger className={` ${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}  >
+             <SelectValue content="Set status" />
             </SelectTrigger>
             
-            <SelectContent className="bg-[#960018] rounded-md border-transparent" style={{color: "#FFBF00", }}>
-              <SelectItem value="online">Online</SelectItem>
-              <SelectItem value="afk">AFK</SelectItem>
-              <SelectItem value="dnd">Do Not Disturb</SelectItem>
-              <SelectItem value="offline">Offline</SelectItem>
+            <SelectContent className={`${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}>
+              <SelectItem value={`online`}>Online</SelectItem>
+              <SelectItem value={`afk`}>AFK</SelectItem>
+              <SelectItem value={`dnd`}>Do Not Disturb</SelectItem>
+              <SelectItem value={`offline`}>Offline</SelectItem>
             </SelectContent>
           </Select>
         </PopoverContent>
       </Popover>
     ) : indicator
   }
-
   const MbtiOverlay = ({ mbti }) => (
     <div
-      className="absolute inset-0 rounded-full border-2 z-0"
+      className={`absolute inset-0 rounded-full border-2 z-0`}
       style={{ borderColor: mbtiColors[mbti] || "transparent" }}
     />
   );
@@ -698,124 +256,21 @@ export default function Component() {
 
   const renderImagePreview = (url) => {
     return (
-      <div className="mt-2 relative">
+      <div className={`mt-2 relative`}>
         <button
-          className="text-white p-1"
+          className={`text-white p-1`}
           onClick={() => {localData.setNewKronImagePreview("")
             update(localData,serverData)
           }}
         >
-        <img src={url} alt="Preview" className="max-w-full h-auto" />
-          <XIcon className="h-4 w-4 mt-2 relative" />
+        <img src={url} alt="Preview" className={`max-w-full h-auto`} />
+          <XIcon className={`h-4 w-4 mt-2 relative`} />
         </button>
       </div>
     );
   };
 
-  const renderUrlPreview = (url) => {
-    if(url == null) return;
-    // This is a simple implementation. In a real-world scenario, you'd want to fetch metadata for the URL
-    return (
-      <div className="mt-2 border rounded p-2">
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 hover:underline"
-        >
-          {url}
-        </a>
-      </div>
-    );
-  };
 
-  const showKronStat=(action)=>{
-    if(action.name==="Save"){
-      return null;
-    }
-    return (action.count <= 0  )? null: action.count;
-  }
-
-  const showKronStatClass=(action)=>{
-    if(action.name==="Save" && (action.count > 0)){
-      return "h-5 w-5 fill-white";
-    }
-    return (action.count <= 0) ? "h-5 w-5 ": "h-5 w-5 mr-1 fill-white";
-  }
-
-  const normalWord = (word: string) => (<span className="text-[#FFF6E9] inline"> {word} </span>);
-  const tagWord = (word: string) => (<button className="text-blue-400 text-sm inline" onClick={(e)=>{
-    localData.setActiveView("explore")
-    localData.setSearchTerm(word)
-    update(localData,serverData)
-  }}> {word} </button>);
-
-  const hrlink = (word: string)=>(<a className="text-blue-400 text-sm inline" href={word}> {word} </a>)
-
-  const renderCarousel = (words: string[]) => {
-    let images = words.filter(word =>{
-      if(word.includes("blob:"))  {
-        return true;
-      }
-      if(word.match(/https?:\/\/[^\s]+/)== null)  {
-        return false;
-      }
-      if (word.includes("youtube.com") || word.includes("youtu.be")) {
-        return true;
-      }
-      if(word.match(/\.(jpeg|jpg|gif|png|webp|mp4)$/) == null &&
-    word.match(/format=(jpeg|jpg|gif|png|webp|mp4)/)== null ){
-        return false;
-      };
-      return word;
-    })
-
-    if(images.length == 0){
-      return (<span></span>);
-    }
-    return(KronImages(images))
-  }
-
-  const renderKronContent = (kron: KronPost) => {
-    // Split the content into words
-    let kronContent = kron.getContent().replace(/(?:\r\n|\r|\n)/g, '  ');
-    let words = kronContent.split(' ');
-    let wordsWithImage= words;
-    let kronImage = kron.getImage();
-    if(kronImage){
-      wordsWithImage.push(kronImage)
-    }
-    console.log(wordsWithImage)
-    return (
-      <div>
-        {words.map((word, index) => {
-          if (word.startsWith('#')) {
-            return tagWord(word);
-          } else if (word.match(/https?:\/\/[^\s]+/)) {
-            if (word.includes("youtube.com") || word.includes("youtu.be")) {
-              return hrlink(word);
-            } else if (word.match(/\.(jpeg|jpg|gif|png|webp|mp4)$/) !== null) {
-              return hrlink(word);
-            } else {
-              return hrlink(word);
-            }
-          } else {
-            return normalWord(word);
-          }
-        })}
-
-      {renderCarousel(wordsWithImage)}
-      </div>
-    );
-  };
-  
-
-  class kronConfig {
-    showFollowing?: Boolean;
-    showAvatar?: Boolean;
-    showTag?: Boolean;
-    showTime?: boolean;
-  }
   const renderKron = (kron: KronPost, index, config: kronConfig= {showFollowing: true,showAvatar: true,showTag: true,showTime: true}) => {
     const user: KronUser =
       serverData.getAllUsers().find((u) => u.user.getId() === kron.getUserId())?.user ||
@@ -823,18 +278,18 @@ export default function Component() {
     return (
       <Card
         key={kron.getId()}
-        className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+        className={`mb-4  ${localData.getTheme().kronShadow} backdrop-blur-md  ${localData.getTheme().borderWither} overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300`}
       >
-        <CardHeader className="flex flex-row items-center justify-between">
-          {(config.showAvatar || config.showTag) && (<div className="flex items-center">
+        <CardHeader className={`flex flex-row items-center justify-between`}>
+          {(config.showAvatar || config.showTag) && (<div className={`flex items-center`}>
             
-            {config.showAvatar && (<div className="relative mr-2"><Avatar className="w-10 h-10 border-2 border-[#FCAE1E]">
+            {config.showAvatar && (<div className={`relative mr-2`}><Avatar className={`w-10 h-10 border-2 ${localData.getTheme().borderContrast4}`}>
               <AvatarImage src={user.getAvatar()} alt={user.getName()} />
               <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
             </Avatar><StatusIndicator status={user.getStatus()} isInteractable={user.getId() === localData.getUser().getId()} /><MbtiOverlay mbti={user.getMbti()} /></div>)}
           
           
-            {config.showTag && (<div><span className="font-bold text-[#FFF6E9]">{user.getName()}</span> {config.showTime && (<span className="text-sm text-[#FFF6E9]/60">{formatTimestamp(kron.getTimestamp())}</span>)}<p className="text-sm text-[#FFF6E9]/60">{user.getTag()}</p></div>)}
+            {config.showTag && (<div><span className={`font-bold  ${localData.getTheme().fullTextColor}`}>{user.getName()}</span> {config.showTime && (<span className={`text-sm  ${localData.getTheme().textColor}`}>{formatTimestamp(kron.getTimestamp())}</span>)}<p className={`text-sm  ${localData.getTheme().textColor}`}>{user.getTag()}</p></div>)}
           
         </div>)}
           {user.getId() !== localData.getUser().getId() 
@@ -843,7 +298,7 @@ export default function Component() {
             <Button
               variant="outline"
               size="sm"
-              className="text-[#FFF6E9] border-[#FFF6E9] hover:bg-[#FFF6E9]/10"
+              className={` ${localData.getTheme().fullTextColor}  ${localData.getTheme().borderColor} ${localData.getTheme().hoverKronShadow}`}
                 onClick={(e) =>{
                   if(!localData.getUser().getFollowing().includes(user.getId())){
                     localData.getUser().getFollowing().unshift(user.getId())
@@ -855,23 +310,23 @@ export default function Component() {
                   update(localData,serverData)
                 }}
             >
-              <UserPlusIcon className="h-4 w-4 mr-1" />
+              <UserPlusIcon className={`h-4 w-4 mr-1`} />
               {localData.getUser().getFollowing().includes(user.getId()) ? 'Unfollow' : 'Follow'}
             </Button>
           )}
         </CardHeader>
         <CardContent>
-          {renderKronContent(kron)}
+          {KronUtils.renderKronContent(kron,localData,serverData,update)}
         </CardContent>
-        <CardFooter className="flex justify-between items-center">
-          <div className="flex gap-4">
+        <CardFooter className={`flex justify-between items-center`}>
+          <div className={`flex gap-4`}>
             {[
               {
                 name: "Comment",
                 icon: MessageCircleIcon,
                 count: kron.getComments().length,
               },
-              { name: "ReKron", icon: FlameKindling, count: kron.getRekrons().length },
+              { name: "ReKron", icon: FlameIcon, count: kron.getRekrons().length },
               { name: "Like", icon: HeartIcon, count: kron.getLikes().length },
               { name: "Save", icon: BookmarkIcon, count: localData.getUser().getMarkers().filter(
                 (k)=>k===kron.getId()
@@ -881,8 +336,8 @@ export default function Component() {
                 key={action.name}
                 variant="ghost"
                 size="sm"
-                className={`p-2 text-[#FFF6E9] transition-colors duration-200 ${buttonColors[(index + actionIndex) % buttonColors.length].bg
-                  } ${buttonColors[(index + actionIndex) % buttonColors.length]
+                className={`p-2  ${localData.getTheme().fullTextColor} transition-colors duration-200 ${localData.getTheme().buttons[( actionIndex) % localData.getTheme().buttons.length].bg
+                  } ${localData.getTheme().buttons[( actionIndex) % localData.getTheme().buttons.length]
                     .hover
                   } bg-opacity-50 hover:bg-opacity-75`}
                 aria-label={action.name}
@@ -892,39 +347,39 @@ export default function Component() {
                 }
                 }
               >
-                <action.icon className={showKronStatClass(action)} />
-                <span>{showKronStat(action)}</span>
+                <action.icon className={KronUtils.showKronStatClass(action,localData.getTheme())} />
+                <span>{KronUtils.showKronStat(action)}</span>
               </Button>
             ))}
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="text-[#FFF6E9]"
+            className={` ${localData.getTheme().fullTextColor}`}
             onClick={() => {handleCopyKronUrl(kron.getId())
               update(localData,serverData)
             }}
           >
             {localData.copiedKronId === kron.getId() ? (
-              <CheckIcon className="h-5 w-5" />
+              <CheckIcon className={`h-5 w-5`}/>
             ) : (
-              <LinkIcon className="h-5 w-5" />
+              <LinkIcon className={`h-5 w-5`} />
             )}
           </Button>
         </CardFooter>
         {localData.activeComments === kron.getId() && (
-          <div className="px-4 pb-4">
+          <div className={`px-4 pb-4`}>
             <Input
               placeholder="Add a comment..."
               onChange={(e) => {localData.setNewComment((e.target as HTMLInputElement).value)
                 update(localData,serverData)
               }}
               value={localData.newComment}
-              className="mb-2 bg-[#FFF6E9]/10 border-[#FFF6E9]/20 text-[#FFF6E9] placeholder-[#FFF6E9]/60"
+              className={`mb-2  ${localData.getTheme().kronShadow}  ${localData.getTheme().borderWither}  ${localData.getTheme().textColor}  ${localData.getTheme().placeholderTranslucent}`}
             />
             <Button onClick={() => {handlePostComment(kron.getId())
               update(localData,serverData)
-            }} className="mb-4">
+            }} className={`mb-4 ${localData.getTheme().fullTextColor}`}>
               Post Comment
             </Button>
             {kron.getComments().map((comment, index) => {
@@ -932,9 +387,9 @@ export default function Component() {
                 serverData.getAllUsers().find((u) => u.id === comment.getUserId())?.user ||
                 localData.getUser();
               return (
-                <div key={comment.getId()} className="mb-2 last:mb-0">
-                  <div className="flex items-center mb-1">
-                    <Avatar className="w-6 h-6 mr-2">
+                <div key={comment.getId()} className={`mb-2 last:mb-0`}>
+                  <div className={`flex items-center mb-1`}>
+                    <Avatar className={`w-6 h-6 mr-2`}>
                       <AvatarImage
                         src={commentUser.getAvatar()}
                         alt={commentUser.getName()}
@@ -946,11 +401,11 @@ export default function Component() {
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-semibold text-sm">
+                    <span className={`font-semibold text-sm`}>
                       {commentUser.getName()}
                     </span>
                   </div>
-                  <p className="text-sm ml-8">{comment.getContent()}</p>
+                  <p className={`text-sm ml-8`}>{comment.getContent()}</p>
                 </div>
               );
             })}
@@ -961,7 +416,7 @@ export default function Component() {
   };
 
   const renderUser = (user: KronUser, config?: kronConfig) => {
-    return (<div key={user.getId()} className="mb-4 flex items-center">
+    return (<div key={user.getId()} className={`mb-4 flex items-center`}>
     <Button
       variant="ghost"
       className={``}
@@ -970,7 +425,7 @@ export default function Component() {
         update(localData,serverData)
       }}
     >
-      <Avatar className="w-12 h-12 mr-4">
+      <Avatar className={`w-12 h-12 mr-4`}>
         <AvatarImage src={user.getAvatar()} alt={user.getName()} />
         <AvatarFallback>
           {user.getName()
@@ -981,43 +436,43 @@ export default function Component() {
       </Avatar>
       </Button>
       <div>
-        <p className="font-bold">{user.getName()}</p>
-        <p className="text-[#FFF6E9]/60">{user.getTag()}</p>
+        <p className={`font-bold ${localData.getTheme().fullTextColor}`}>{user.getName()}</p>
+        <p className={` ${localData.getTheme().textColor}`}>{user.getTag()}</p>
       </div>
     </div>)
   }
   const renderExploreContent = () => {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <SearchIcon className="text-[#FFF6E9]/60" />
+      <div className={`space-y-6`}>
+        <div className={`flex items-center space-x-4`}>
+          <SearchIcon className={` ${localData.getTheme().fullTextColor}`} />
           <Input
             type="text"
             placeholder="Search..."
-            className="flex-grow bg-[#FFF6E9]/10 border-[#FFF6E9]/20 text-[#FFF6E9] placeholder-[#FFF6E9]/60"
+            className={`flex-grow  ${localData.getTheme().kronShadow}  ${localData.getTheme().borderWither}  ${localData.getTheme().fullTextColor}  ${localData.getTheme().placeholderTranslucent}`}
             onChange={(e)=>{
               localData.setSearchTerm(e.target.value)
               update(localData,serverData)
             }}
-            value={localData.searchTerm}
+            content={localData.searchTerm}
           />
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Suggested Tags</h3>
-          <div className="flex flex-wrap gap-2">
+          <h3 className={`text-lg font-semibold mb-2`}>Suggested Tags</h3>
+          <div className={`flex flex-wrap gap-2`}>
             {serverData.getSuggestedTags().map((tag, index) => (
               <Button
                 key={index}
                 variant="outline"
                 size="sm"
-                className="bg-[#FFF6E9]/10 hover:bg-[#FFF6E9]/20 text-[#FFF6E9]"
+                className={` ${localData.getTheme().kronShadow} ${localData.getTheme().kronShadow}  ${localData.getTheme().fullTextColor}`}
                 onClick={() => {
                   localData.setSearchTerm(localData.searchTerm+" "+tag)
                   update(localData,serverData)
                 }}
               >
-                <HashIcon className="w-4 h-4 mr-1" />
+                <HashIcon className={`w-4 h-4 mr-1`} />
                 {tag}
               </Button>
             ))}
@@ -1028,38 +483,38 @@ export default function Component() {
           localData.setActiveSearchTab(e);
           update(localData,serverData)
         }} value={localData.activeSearchTab} >
-          <TabsList className="bg-[#960018]/60">
-            <TabsTrigger value="posts" className="text-[#FFF6E9]">Posts</TabsTrigger>
-            <TabsTrigger value="users" className="text-[#FFF6E9]">Users</TabsTrigger>
-            <TabsTrigger value="groups" className="text-[#FFF6E9]">Groups</TabsTrigger>
+          <TabsList className={`${localData.getTheme().mainColorTransless}`}>
+            <TabsTrigger value="posts" className={` ${localData.getTheme().fullTextColor}`}>Posts</TabsTrigger>
+            <TabsTrigger value="users" className={` ${localData.getTheme().fullTextColor}`}>Users</TabsTrigger>
+            <TabsTrigger value="groups" className={` ${localData.getTheme().fullTextColor}`}>Groups</TabsTrigger>
           </TabsList>
-          <TabsContent value="posts">
+          <TabsContent value={`posts`}>
             {serverData.filterPosts(localData.searchTerm).filter(kron =>{
           return !kron.isCommentKron() && !kron.isGroupKron()
         }).map((kron, index) => renderKron(kron, index))}
           </TabsContent>
-          <TabsContent value="users">
+          <TabsContent value={`users`}>
             {serverData.filterUsers(localData.searchTerm).map((user, index) => (
-              <Card key={index} className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20">
-                <CardHeader className="flex flex-row items-center">
-                  <Avatar className="w-10 h-10 mr-2">
+              <Card key={index} className={`mb-4  ${localData.getTheme().kronShadow} backdrop-blur-md  ${localData.getTheme().borderWither}`}>
+                <CardHeader className={`flex flex-row items-center`}>
+                  <Avatar className={`w-10 h-10 mr-2`}>
                     <AvatarImage src={user.getAvatar()} alt={user.getName()} />
                     <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold">{user.getName()}</h3>
-                    <p className="text-sm text-[#FFF6E9]/60">{user.getTag()}</p>
+                    <h3 className={`font-semibold ${localData.getTheme().fullTextColor}`}>{user.getName()}</h3>
+                    <p className={`text-sm  ${localData.getTheme().textColor}`}>{user.getTag()}</p>
                   </div>
                 </CardHeader>
               </Card>
             ))}
           </TabsContent>
-          <TabsContent value="groups">
+          <TabsContent value={`groups`}>
             {serverData.filterGroups(localData.searchTerm).map((group, index) => (
-              <Card key={index} className="mb-4 bg-[#FFF6E9]/10 backdrop-blur-md border-[#FFF6E9]/20">
+              <Card key={index} className={`mb-4  ${localData.getTheme().kronShadow} backdrop-blur-md  ${localData.getTheme().borderWither}`}>
                 <CardHeader>
-                  <h3 className="font-semibold">{group.getName()}</h3>
-                  <p className="text-sm text-[#FFF6E9]/60">{group.getMembers().length} members</p>
+                  <h3 className={`font-semibold ${localData.getTheme().fullTextColor}`}>{group.getName()}</h3>
+                  <p className={`text-sm  ${localData.getTheme().textColor}`}>{group.getMembers().length} members</p>
                 </CardHeader>
               </Card>
             ))}
@@ -1115,8 +570,8 @@ export default function Component() {
           }
           return (
             <div>
-              <div className="mb-4 flex items-center">
-                <Avatar className="w-16 h-16 mr-4">
+              <div className={`mb-4 flex items-center`}>
+                <Avatar className={`w-16 h-16 mr-4`}>
                   <AvatarImage
                     src={selUser.getAvatar()}
                     alt={selUser.getName()}
@@ -1129,8 +584,8 @@ export default function Component() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-2xl font-bold">{selUser.getName()}</h2>
-                  <p className="text-[#FFF6E9]/60">{selUser.getTag()}</p>
+                  <h2 className={`text-2xl font-bold`}>{selUser.getName()}</h2>
+                  <p className={` ${localData.getTheme().textColor}`}>{selUser.getTag()}</p>
                 </div>
               </div>
               {userKrons.map((kron, index) => renderKron(kron.kron, index,{showFollowing: false,showTag: true,showAvatar:true,showTime: true}))}
@@ -1147,7 +602,7 @@ export default function Component() {
         })
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Following</h2>
+            <h2 className={`text-2xl font-bold mb-4`}>Following</h2>
             {followingUsers.map((u) => renderUser(u))}
           </div>
         );
@@ -1159,109 +614,109 @@ export default function Component() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-[#960018] via-[#C8442C] to-[#FCAE1E] text-[#FFF6E9]">
+    <div className={`flex h-screen ${localData.getTheme().gradient} ${localData.getTheme().fullTextColor}`}>
       {/* Sidebar */}
-      <div className="w-64 border-r border-[#FFF6E9]/20 p-4 bg-[#960018]/80 backdrop-blur-md flex flex-col">
-        <div className="flex items-center mb-8">
-          <KronicleLogo />
-          <span className="text-xl font-bold text-[#FFF6E9] ml-2">
+      <div className={`w-64 border-r ${localData.getTheme().borderWither} p-4 ${localData.getTheme().mainColorTrans} backdrop-blur-md flex flex-col`}>
+        <div className={`flex items-center mb-8`}>
+          {KronicleLogo}
+          <span className={`text-xl font-bold  ${localData.getTheme().fullTextColor} ml-2`}>
             Kronicle
           </span>
         </div>
-        <nav className="flex-grow">
+        <nav className={`flex-grow`}>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[0].bg} ${buttonColors[0].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[0].bg} ${localData.getTheme().buttons[0].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {
               localData.setActiveView("home")
               localData.setSelectedGroup(null)
               update(localData,serverData)}}
           >
-            <HomeIcon className="mr-2 h-4 w-4" />
+            <HomeIcon className={`mr-2 h-4 w-4`} />
             Home
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[1].bg} ${buttonColors[1].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[1].bg} ${localData.getTheme().buttons[1].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("explore")
               update(localData,serverData)
             }}
           >
-            <SearchIcon className="mr-2 h-4 w-4" />
+            <SearchIcon className={`mr-2 h-4 w-4`} />
             Explore
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[2].bg} ${buttonColors[2].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[2].bg} ${localData.getTheme().buttons[2].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("notifications")
               update(localData,serverData)
             }}
           >
-            <BellIcon className="mr-2 h-4 w-4" />
+            <BellIcon className={`mr-2 h-4 w-4`} />
             Notifications
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[3].bg} ${buttonColors[3].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[3].bg} ${localData.getTheme().buttons[3].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("messages")
               update(localData,serverData)
             }}
           >
-            <MessageCircleIcon className="mr-2 h-4 w-4" />
+            <MessageCircleIcon className={`mr-2 h-4 w-4`} />
             Messages
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[4].bg} ${buttonColors[4].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[4].bg} ${localData.getTheme().buttons[4].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("bookmarks")
               update(localData,serverData)
             }}
           >
-            <BookmarkIcon className="mr-2 h-4 w-4" />
+            <BookmarkIcon className={`mr-2 h-4 w-4`} />
             Bookmarks
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[5].bg} ${buttonColors[5].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[5].bg} ${localData.getTheme().buttons[5].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("profile")
               localData.setSelectedUser(localData.getUser())
               update(localData,serverData)
             }}
           >
-            <UserIcon className="mr-2 h-4 w-4" />
+            <UserIcon className={`mr-2 h-4 w-4`} />
             Profile
           </Button>
           <Button
             variant="ghost"
-            className={`w-full justify-start mb-2 text-black ${buttonColors[6].bg} ${buttonColors[6].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+            className={`w-full justify-start mb-2 text-black ${localData.getTheme().buttons[6].bg} ${localData.getTheme().buttons[6].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
             onClick={() => {localData.setActiveView("following")
               update(localData,serverData)
             }}
           >
-            <UsersIcon className="mr-2 h-4 w-4" />
+            <UsersIcon className={`mr-2 h-4 w-4`} />
             Following
           </Button>
-          <div className="mt-4 mb-2 text-[#FFF6E9]/60 font-semibold">Groups</div>
+          <div className={`mt-4 mb-2  ${localData.getTheme().textColor} font-semibold`}>Groups</div>
           {serverData.getAllGroups().filter(group => group.kronGroup.getMembers().includes(localData.getUser().getId())).map((group, index) => (
             <Button
               key={group.id}
               variant="ghost"
-              className={`w-full justify-start mb-2 text-black ${buttonColors[index % buttonColors.length].bg} ${buttonColors[index % buttonColors.length].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
+              className={`w-full justify-start mb-2 ${localData.getTheme().fullTextColor} ${localData.getTheme().buttons[index % localData.getTheme().buttons.length].bg} ${localData.getTheme().buttons[index % localData.getTheme().buttons.length].hover} transition-colors duration-200 bg-opacity-70 hover:bg-opacity-90`}
               onClick={() => {
                 localData.setSelectedGroup(group.kronGroup)
                 localData.setActiveView("group")
                 update(localData,serverData)
               }}
             >
-              <FolderIcon className="mr-2 h-4 w-4" />
+              <FolderIcon className={`mr-2 h-4 w-4`} />
               {group.kronGroup.getName()}
             </Button>
           ))}
         </nav>
-        <div className="mt-auto pt-4 border-t border-[#FFF6E9]/20">
-          <div className="flex items-center mb-2">
-            <div className="relative mr-2">
-              <Avatar className="w-10 h-10">
+        <div className={`mt-auto pt-4 border-t  ${localData.getTheme().borderWither}`}>
+          <div className={`flex items-center mb-2`}>
+            <div className={`relative mr-2`}>
+              <Avatar className={`w-10 h-10`}>
                 <AvatarImage
                   src={localData.getUser().getAvatar()}
                   alt={localData.getUser().getName()}
@@ -1277,31 +732,31 @@ export default function Component() {
               <MbtiOverlay mbti={localData.getUser().getMbti()} />
             </div>
             <div>
-              <p className="font-semibold text-[#FFF6E9]">
+              <p className={`font-semibold  ${localData.getTheme().fullTextColor}`}>
                 {localData.getUser().getName()}
               </p>
-              <p className="text-xs text-[#FFF6E9]/60">
+              <p className={`text-xs  ${localData.getTheme().textColor}`}>
                 {localData.getUser().getTag()}
               </p>
             </div>
           </div>
           {localData.userIp && (
-            <p className="mt-2 text-xs text-[#FFF6E9]/60">Your IP: {localData.userIp}</p>
+            <p className={`mt-2 text-xs  ${localData.getTheme().textColor}`}>Your IP: {localData.userIp}</p>
           )}
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-auto">
+      <div className={`flex-1 overflow-auto`}>
         {/* Header */}
-        <header className="bg-[#960018]/80 backdrop-blur-md text-[#FFF6E9] p-4 sticky top-0 z-10">
-          <h1 className="text-xl font-bold">{"Kronicle "+localData.getTittle()}</h1>
+        <header className={`${localData.getTheme().mainColorTrans} backdrop-blur-md  ${localData.getTheme().fullTextColor} p-4 sticky top-0 z-10`}>
+          <h1 className={`text-xl font-bold`}>{"Kronicle "+localData.getTittle()}</h1>
         </header>
 
         {/* Kron input */}
-        <div className="p-4 border-b border-[#FFF6E9]/20 bg-[#960018]/60 backdrop-blur-md">
+        <div className={`p-4 border-b ${localData.getTheme().borderWither} backdrop-blur-md`}>
           <Textarea
-            className="w-full mb-2 bg-[#FFF6E9]/10 border-[#FFF6E9]/20 text-[#FFF6E9] placeholder-[#FFF6E9]/60"
+            className={`w-full mb-2 ${localData.getTheme().kronShadow}  ${localData.getTheme().borderWither} ${localData.getTheme().fullTextColor}  ${localData.getTheme().placeholderTranslucent}`}
             placeholder="What's happening in your Kronicle?"
             onChange={(e) => {localData.setNewKronContent(e.target.value)
               update(localData,serverData)
@@ -1309,21 +764,21 @@ export default function Component() {
             value={localData.newKronContent}
           />
           {localData.newKronImagePreview && renderImagePreview(localData.newKronImagePreview)}
-          <div className="flex justify-between items-center mt-2">
+          <div className={`flex justify-between items-center mt-2`}>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => {
                 handleImageUpload(e)
               }}
-              className="hidden"
+              className={`hidden`}
               id="image-upload"
             />
-            <label htmlFor="image-upload" className="cursor-pointer">
-              <ImageIcon className="h-6 w-6 text-[#FFF6E9]" />
+            <label htmlFor={`image-upload`} className={`cursor-pointer`}>
+              <ImageIcon className={`h-6 w-6  ${localData.getTheme().fullTextColor}`} />
             </label>
             <Button
-              className={`text-[#FFF6E9] transition-all duration-300 shadow-md hover:shadow-lg ${buttonColors[2].bg} ${buttonColors[2].hover}`}
+              className={` ${localData.getTheme().fullTextColor} transition-all duration-300 shadow-md hover:shadow-lg ${localData.getTheme().buttons[2].bg} ${localData.getTheme().buttons[2].hover}`}
               onClick={()=>{
                 handlePostKron()
                 localData.setActiveView("home")
@@ -1336,7 +791,7 @@ export default function Component() {
         </div>
 
         {/* Kron Feed */}
-        <div className="p-4">{renderContent()}</div>
+        <div className={`p-4`}>{renderContent()}</div>
       </div>
     </div>
   );
