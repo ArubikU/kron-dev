@@ -4,6 +4,7 @@ export const ClasicTheme: ThemeColors = {
   placeholderWither: "placeholder-[#FFF6E9]",
   placeholderTranslucent: "placeholder-[#FFF6E9]/60",
   fullTextColor: 'text-[#FFF6E9]',
+  subTextColor: 'text-[#FFF6E9]/80',
   fillTextColor: 'fill-[#FFF6E9]',
   textColor: 'text-[#FFF6E9]/60',
   fullTextColorStyleTwo: 'text-[#FFBF00]', // Negro

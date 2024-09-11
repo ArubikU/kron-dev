@@ -5,7 +5,7 @@ import * as React from "react";
 
 import ReactDOMServer from 'react-dom/server';
 
-import { IServerData, LocalData } from "../objects/server/interface";
+import { IServerData, LocalData } from "../server/api/dataModels/interface";
 
 
 
@@ -18,14 +18,11 @@ function getGroups(str: string, localData: LocalData, serverData: IServerData, u
     if (m.index === regex.lastIndex) {
       regex.lastIndex++;
     }
-
     if (m.length > 1) {
-      if (m) {
-        let a = m[index];
-        if (a) {
-          results.push(a);
-        }
-      }
+      if (!m) continue;
+      let a = m[index];
+      if (!a) continue;
+      results.push(a);
     }
   }
 

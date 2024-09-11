@@ -1,15 +1,14 @@
-import { ILocalUser, IKronGroup as KronGroup, IUser as KronUser, IServerDataBuilder as ServerDataBuilder } from "./server/interface";
-import * as LocalKron from "./server/json-impl";
+import { IKronGroup as KronGroup, IUser as KronUser, MBTI, IServerDataBuilder as ServerDataBuilder } from "../server/api/dataModels/interface";
+import * as LocalKron from "../server/api/dataModels/json-impl";
 
-export const localUserExample: ILocalUser =new LocalKron.LocalKronUser({
+export const exampleUser: KronUser =new LocalKron.KronUser({
     id: "1234-1234-1234-1234",
     name: "John Doe",
     tag: "@johndoe",
     avatar: "default",
     status: "online",
-    mbti: "INTJ",
+    mbti: MBTI.INTP,
     mail: "test@kron.xyz",
-    password: "bestpassword",
     followers: [],
     following: []}
   );
@@ -403,7 +402,7 @@ export const groups: KronGroup[] = [
 export var groupPosts: LocalKron.Kron[] = [
   ]
   
-  groups[0].addMember(localUserExample.getId())
+  groups[0].addMember(exampleUser.getId())
   
   groups.forEach(group =>{
     group.getMembers().forEach(memberId =>{
@@ -421,12 +420,15 @@ export var groupPosts: LocalKron.Kron[] = [
       groupPosts.push(tempKron);
     })
   })
-  export var BuilderServer: ServerDataBuilder = new LocalKron.JsonServerDataBuilder();
-  BuilderServer.addUser(localUserExample,localUserExample.getTag());
+  var BuilderServer: ServerDataBuilder = new LocalKron.JsonServerDataBuilder();
+  BuilderServer.addUser(exampleUser,exampleUser.getTag());
   starTrekUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
   starWarsUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
   disneyUsers.forEach(u => BuilderServer.addUser(u,u.getTag()));
   export var serverDataState = BuilderServer.build();
+  serverDataState.getAllUsers().forEach((u)=>{
+    serverDataState.addPrivateKey(u.user.getMail(),"1234");
+  }) 
   groups.forEach(g => serverDataState.addGroup(g));
   publicPosts.forEach(p => serverDataState.postKron(p));
   groupPosts.forEach(p => serverDataState.postKron(p));

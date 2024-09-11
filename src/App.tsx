@@ -1,71 +1,66 @@
 
 
 import {
-  BellIcon,
-  BookmarkIcon,
-  CheckIcon,
-  FlameIcon,
-  FolderIcon,
-  HashIcon,
-  HeartIcon,
-  HomeIcon,
-  ImageIcon,
-  LinkIcon,
-  MessageCircleIcon,
-  UserIcon,
-  UserPlusIcon,
-  UsersIcon,
-  XIcon
+    BellIcon,
+    BookmarkIcon,
+    CheckIcon,
+    FlameIcon,
+    FolderIcon,
+    HashIcon,
+    HeartIcon,
+    HomeIcon,
+    ImageIcon,
+    LinkIcon,
+    MessageCircleIcon,
+    UserIcon,
+    UserPlusIcon,
+    UsersIcon,
+    XIcon
 } from "lucide-react"
 import * as React from "react"
 import {
-  SearchIcon
+    SearchIcon
 } from "../src/components/icons"
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
 } from "../src/components/ui/avatar"
 import { Button } from "../src/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
 } from "../src/components/ui/card"
 import { Input } from "../src/components/ui/input"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../src/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "../src/components/ui/select"
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
 } from "../src/components/ui/tabs"
 import { Textarea } from "../src/components/ui/textarea"
 
-import { mbtiColors, statusColors } from "./objects/colors"
+import { statusColors } from "./objects/colors"
 
-import { IKron as KronPost, IUser as KronUser, LocalData } from "../src/objects/server/interface"
-import * as LocalKron from "../src/objects/server/json-impl"
 import { formatTimestamp } from "./lib/utils"
 import * as Example from "./objects/exampledata"
+import { IKron as KronPost, IUser as KronUser, LocalData } from "./server/api/dataModels/interface"
+import * as LocalKron from "./server/api/dataModels/json-impl"
 
 import * as KronUtils from "./lib/KronUtils"
 import { kronConfig } from "./lib/KronUtils"
 
 export default function Component() {
-  const [localDataT,updateLocal] = React.useState(new LocalData(Example.localUserExample,[]));
+  const [localDataT,updateLocal] = React.useState(new LocalData(Example.exampleUser,[]));
   let localData = localDataT;
   const [serverDataT,updateServer] = React.useState(Example.serverDataState);
   let serverData = serverDataT;
@@ -73,7 +68,6 @@ export default function Component() {
   let KronicleLogo = localData.getTheme().logo
 
   const [render, forceRender] = React.useState(1);
-  console.log(window.location.href)
 
   function update(local,server){
     updateLocal(local)
@@ -89,41 +83,82 @@ export default function Component() {
 
 
 
+
   const StatusIndicator = ({ status, isInteractable = true }) => {
+    const [isVisible, setIsVisible] = React.useState(false);
+    const selectRef = React.useRef(null);
+  
+    const toggleVisibility = () => {
+      if (isInteractable) {
+        setIsVisible(!isVisible);
+      }
+    };
+  
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    };
+  
+    React.useEffect(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
   
     const indicator = (
-      <div className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 ${localData.getTheme().borderMainColor} transform translate-x-1/3 translate-y-1/3 z-10`} />
-    )
-
-    return isInteractable ? (
-      <Popover>
-        <PopoverTrigger asChild >
-          {indicator}
-        </PopoverTrigger>
-        <PopoverContent style={{ backgroundColor: 'transparent', padding: '10px', borderRadius: '-1px' , borderColor: "transparent", borderBlockEndColor: "transparent" , border: "transparent", boxShadow: "none"}}>
-          <Select value={status} onValueChange={(e) => {handleStatusChange(e)
-            update(localData,serverData)
-          }
-          }>
-            <SelectTrigger className={` ${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}  >
-             <SelectValue content="Set status" />
-            </SelectTrigger>
-            
-            <SelectContent className={`${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}>
-              <SelectItem value={`online`}>Online</SelectItem>
-              <SelectItem value={`afk`}>AFK</SelectItem>
-              <SelectItem value={`dnd`}>Do Not Disturb</SelectItem>
-              <SelectItem value={`offline`}>Offline</SelectItem>
-            </SelectContent>
-          </Select>
-        </PopoverContent>
-      </Popover>
-    ) : indicator
-  }
-  const MbtiOverlay = ({ mbti }) => (
+      <div
+        className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 ${localData.getTheme().borderMainColor} transform translate-x-1/3 translate-y-1/3 z-10`}
+        onClick={toggleVisibility}
+      />
+    );
+  
+    return (
+      <div className="relative">
+        {indicator}
+        {isVisible && isInteractable && (
+          <div
+            ref={selectRef}
+            className="fixed bottom-0 left-0 right-0 w-full bg-transparent p-4 z-50"
+            style={{
+              boxShadow: "0px -2px 10px rgba(0, 0, 0, 0)",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+            }}
+          >
+            <Select
+              value={status}
+              onValueChange={(e) => {
+                handleStatusChange(e);
+                update(localData, serverData);
+                setIsVisible(false); // Hide after selection
+              }}
+            >
+              <SelectTrigger
+                className={`w-full ${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo} p-3 text-center`}
+              >
+                <SelectValue content="Set status" />
+              </SelectTrigger>
+  
+              <SelectContent
+                className={`${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}
+              >
+                <SelectItem value={`online`}>Online</SelectItem>
+                <SelectItem value={`afk`}>AFK</SelectItem>
+                <SelectItem value={`dnd`}>Do Not Disturb</SelectItem>
+                <SelectItem value={`offline`}>Offline</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+    );
+  };
+  const MbtiOverlay = ({user }) => (
     <div
       className={`absolute inset-0 rounded-full border-2 z-0`}
-      style={{ borderColor: mbtiColors[mbti] || "transparent" }}
+      style={{ borderColor: user.getMbti().color}}
     />
   );
 
@@ -133,7 +168,7 @@ export default function Component() {
         const response = await fetch("https://api.ipify.org?format=json");
         const data = await response.json();
         localData.setUserIp(data.ip);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error fetching IP:", error);
         localData.setUserIp("Unable to fetch IP");
       }
@@ -286,7 +321,7 @@ export default function Component() {
             {config.showAvatar && (<div className={`relative mr-2`}><Avatar className={`w-10 h-10 border-2 ${localData.getTheme().borderContrast4}`}>
               <AvatarImage src={user.getAvatar()} alt={user.getName()} />
               <AvatarFallback>{user.getName().split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar><StatusIndicator status={user.getStatus()} isInteractable={user.getId() === localData.getUser().getId()} /><MbtiOverlay mbti={user.getMbti()} /></div>)}
+            </Avatar><StatusIndicator status={user.getStatus()} isInteractable={user.getId() === localData.getUser().getId()} /><MbtiOverlay user={user} /></div>)}
           
           
             {config.showTag && (<div><span className={`font-bold  ${localData.getTheme().fullTextColor}`}>{user.getName()}</span> {config.showTime && (<span className={`text-sm  ${localData.getTheme().textColor}`}>{formatTimestamp(kron.getTimestamp())}</span>)}<p className={`text-sm  ${localData.getTheme().textColor}`}>{user.getTag()}</p></div>)}
@@ -729,7 +764,7 @@ export default function Component() {
                 </AvatarFallback>
               </Avatar>
               <StatusIndicator status={localData.getUser().getStatus()} />
-              <MbtiOverlay mbti={localData.getUser().getMbti()} />
+              <MbtiOverlay user={localData.getUser()} />
             </div>
             <div>
               <p className={`font-semibold  ${localData.getTheme().fullTextColor}`}>

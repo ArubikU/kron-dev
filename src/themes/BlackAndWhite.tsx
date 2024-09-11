@@ -5,6 +5,7 @@ export const BlackAndWhiteTheme: ThemeColors = {
     placeholderWither: "placeholder-[#000000]",  // Gris Claro
     placeholderTranslucent: "placeholder-[#000000]/60",
     fullTextColor: 'text-[#000000]',              // Negro
+    subTextColor: 'text-[#000000]/80',              // Negro
     fillTextColor: 'fill-[#000000]',              // Negro
     fullTextColorStyleTwo: 'text-[#FFFFFF]',              // Negro
     fullTextColorStyleThree: 'text-[#FFFFFF]',              // Negro

@@ -1,6 +1,44 @@
+import { ThemeColors } from "../../../themes/Theme";
+import * as Themes from "../../../themes/Themes";
 
-import { ThemeColors } from "../../themes/Theme";
-import * as Themes from "../../themes/Themes";
+export class MBTI{
+    public static MBTIS: MBTI[] = MBTI[16];
+    public color: string;
+    public id: string;
+
+    constructor(color: string,id: string){
+        this.color = color;
+        this.id = id;
+
+        MBTI.MBTIS.push(this)
+
+    
+    }
+    public static ISTJ = new MBTI("#95627b","ISTJ");
+    public static INTJ = new MBTI("#feff94","INTJ");
+    public static INTP = new MBTI("#58469a","INTP");
+    public static ISTP = new MBTI("#60b4c1","ISTP");
+    public static ISFJ = new MBTI("#707bd2","ISFJ");
+    public static INFJ = new MBTI("#6ab674","INFJ");
+    public static INFP = new MBTI("#707bd2","INFP");
+    public static ISFP = new MBTI("#7188aa","ISFP");
+    public static ESTJ = new MBTI("#01468a","ESTJ");
+    public static ESFJ = new MBTI("#f1cf61","ESFJ");
+    public static ENTJ = new MBTI("#cfe67e","ENTJ");
+    public static ENFJ = new MBTI("#ea742e","ENFJ");
+    public static ESTP = new MBTI("#bf7a2f","ESTP");
+    public static ESFP = new MBTI("#f99f4b","ESFP");
+    public static ENFP = new MBTI("#905a36","ENFP");
+    public static ENTP = new MBTI("#d63f40","ENTP");
+    public static NONE = new MBTI("transparent", "NONE");
+    
+    
+  };
+export function MBTIfromName(mbti: string): MBTI {
+    var a = MBTI.MBTIS.find((mb,a,_)=>(mb.id.includes(mbti)));
+    if(a) return a;
+    return MBTI.NONE;
+}
 
 export interface IUser {
     getId(): string;
@@ -12,8 +50,8 @@ export interface IUser {
     setAvatar(avatar: string): void;
     getStatus(): 'online' | 'offline' | 'dnd' | 'afk';
     setStatus(status: 'online' | 'offline' | 'dnd' | 'afk'): void;
-    getMbti(): string;
-    setMbti(mbti: string): void;
+    getMbti(): MBTI;
+    setMbti(mbti: MBTI | string): void;
     getFollowers(): string[];
     setFollowers(followers: string[]): void;
     getFollowing(): string[];
@@ -28,11 +66,6 @@ export interface IUser {
     setMarker(markers: string[]) : void;
     addMarker(post: IKron): void;
     removeMarker(post: IKron): void;
-}
-
-export interface ILocalUser extends IUser {
-    getPassword(): string;
-    setPassword(password: string): void;
 }
 
 export interface IKron {
@@ -92,6 +125,7 @@ export interface IServerData {
     getGroupKrons(group: IKronGroup): IKron[];
     addUser(user: IUser, tag: string): void;
     addPrivateKey(mail: string, password: string): void;
+    setPassword(user: IUser, password: string): void;
     addKron(kron: IKron): void;
     addUserKrons(userId: string, kronIds: string[]): void;
     addGroup(kronGroup: IKronGroup): void;
@@ -120,7 +154,7 @@ export interface IServerDataBuilder {
     addGroup(kronGroup: IKronGroup): IServerDataBuilder;
 }
 export class LocalData {
-    private user: ILocalUser;
+    private user: IUser;
     private currentKrons: string[];
 
     private theme: ThemeColors = Themes.blackTheme;
@@ -206,12 +240,12 @@ export class LocalData {
         this.newComment = data;
         
     }
-    constructor(user: ILocalUser, krons: string[]) {
+    constructor(user: IUser, krons: string[]) {
         this.user = user;
         this.currentKrons = krons;
     }
 
-    getUser(): ILocalUser {
+    getUser(): IUser {
         return this.user;
     }
 
@@ -219,7 +253,4 @@ export class LocalData {
         return this.currentKrons;
     }
 
-    isValid(serverData: IServerData): boolean {
-        return serverData.verifyUser(this.user.getMail(), this.user.getPassword());
-    }
 }

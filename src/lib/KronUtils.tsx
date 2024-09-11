@@ -12,7 +12,7 @@ import * as React from "react"
 import { Button } from "../components/ui/button"
 
 
-import { IServerData, IKron as KronPost, LocalData } from "../objects/server/interface"
+import { IServerData, IKron as KronPost, LocalData } from "../server/api/dataModels/interface"
 
 
 import useLinksUsernamesHashtags from '../lib/useContentKron'

@@ -1,12 +1,12 @@
-import { generateUUIDv6 } from "../../lib/utils";
-import { IKron, IKronGroup, IServerData, IServerDataBuilder, IUser, Tag } from "./interface";
+import { generateUUIDv6 } from "../../../lib/utils";
+import { IKron, IKronGroup, IServerData, IServerDataBuilder, IUser, MBTI, MBTIfromName, Tag } from "./interface";
 export class KronUser implements IUser {
     private id: string;
     private name: string;
     private tag: string;
     private avatar: string;
     private status: 'online' | 'offline' | 'dnd' | 'afk';
-    private mbti: string;
+    private mbti: MBTI;
     private followers: string[];
     private following: string[];
     private mail: string;
@@ -19,7 +19,7 @@ export class KronUser implements IUser {
         tag: string,
         avatar: string,
         status: 'online' | 'offline' | 'dnd' | 'afk',
-        mbti: string,
+        mbti: string | MBTI,
         followers: string[],
         following: string[],
         mail: string,
@@ -34,7 +34,11 @@ export class KronUser implements IUser {
             ? "https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png"
             : user.avatar;
         this.status = user.status;
-        this.mbti = user.mbti;
+        if(user.mbti instanceof MBTI){
+            this.mbti = user.mbti;
+        }else{
+            this.mbti = MBTIfromName(user.mbti);
+        }
         this.followers = user.followers;
         this.following = user.following;
         this.mail = user.mail;
@@ -62,8 +66,8 @@ export class KronUser implements IUser {
     setAvatar(avatar: string): void { this.avatar = avatar; }
     getStatus(): 'online' | 'offline' | 'dnd' | 'afk' { return this.status; }
     setStatus(status: 'online' | 'offline' | 'dnd' | 'afk'): void { this.status = status; }
-    getMbti(): string { return this.mbti; }
-    setMbti(mbti: string): void { this.mbti = mbti; }
+    getMbti(): MBTI { return this.mbti; }
+    setMbti(mbti: MBTI ): void { this.mbti = mbti; }
     getFollowers(): string[] { return this.followers; }
     setFollowers(followers: string[]): void { this.followers = followers; }
     getFollowing(): string[] { return this.following; }
@@ -110,8 +114,6 @@ export class KronUser implements IUser {
 
 export class LocalKronUser extends KronUser{
 
-    private password: string;
-
     constructor(user: {
         id: string,
         name: string,
@@ -137,10 +139,7 @@ export class LocalKronUser extends KronUser{
             following : user.following,
             mail : user.mail
         })
-        this.password = user.password;
     }
-    getPassword(): string {return this.password}
-    setPassword(password: string): void {this.password = password}
 
 }
 
@@ -274,6 +273,9 @@ export class KronGroup implements IKronGroup {
     }
 }
 export class JsonServerData implements IServerData {
+    setPassword(user: IUser, password: string) {
+        this.privateKeys.set(user.getId(),password);
+    }
     filterUsers(searchTerm: string): IUser[] {return this.users.map((e)=> e.user).filter(user =>
         user.getName().toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.getTag().toLowerCase().includes(searchTerm.toLowerCase())
@@ -327,7 +329,7 @@ export class JsonServerData implements IServerData {
     private users: { id: string, user: KronUser }[] = [];
     private krons: { id: string, kron: Kron }[] = [];
     private groups: { id: string, kronGroup: KronGroup }[] = [];
-    private privateKeys: { mail: string, password: string }[] = [];
+    private privateKeys: Map<string,string> = new Map<string,string>();
     private userKrons: { id: string, krons: string[] }[] = [];
     private tags: Tag[] = [];
     
@@ -354,10 +356,8 @@ export class JsonServerData implements IServerData {
     }
 
     verifyUser(email: string, password: string): boolean {
-        const userKey = this.privateKeys.find(
-            (key) => key.mail === email && key.password === password
-        );
-        return userKey !== undefined;
+        if(!this.privateKeys.has(email)) return false;
+        return this.privateKeys.get(email)===password;
     }
 
     getUserByEmail(email: string): IUser | null {
@@ -416,7 +416,7 @@ export class JsonServerData implements IServerData {
     }
 
     addPrivateKey(mail: string, password: string): void {
-        this.privateKeys.push({ mail, password });
+        this.privateKeys.set(mail, password );
     }
 
     addKron(kron: IKron): void {

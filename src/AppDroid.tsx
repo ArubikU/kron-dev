@@ -27,11 +27,6 @@ import {
 } from "../src/components/ui/card"
 import { Input } from "../src/components/ui/input"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../src/components/ui/popover"
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -40,14 +35,14 @@ import {
 } from "../src/components/ui/select"
 import { Textarea } from "../src/components/ui/textarea"
 
-import { mbtiColors, statusColors } from "./objects/colors"
+import { statusColors } from "./objects/colors"
 
-import { IKron as KronPost, IUser as KronUser, LocalData } from "../src/objects/server/interface"
-import * as LocalKron from "../src/objects/server/json-impl"
 import * as KronUtils from "./lib/KronUtils"
 import { kronConfig, renderMobileSheet } from "./lib/KronUtils"
 import { formatMobileTimestamp } from "./lib/utils"
 import * as Example from "./objects/exampledata"
+import { IKron as KronPost, IUser as KronUser, LocalData, MBTI } from "./server/api/dataModels/interface"
+import * as LocalKron from "./server/api/dataModels/json-impl"
 
 
 
@@ -60,7 +55,7 @@ import { ScrollArea } from "../src/components/ui/scroll-area"
 
 export default function Component() {
 
-  const [localDataT, updateLocal] = React.useState(new LocalData(Example.localUserExample, []));
+  const [localDataT, updateLocal] = React.useState(new LocalData(Example.exampleUser, []));
   let localData = localDataT;
   const [serverDataT, updateServer] = React.useState(Example.serverDataState);
   let serverData = serverDataT;
@@ -80,41 +75,84 @@ export default function Component() {
     forceRender(render + 1)
   }
   
+
   const StatusIndicator = ({ status, isInteractable = true }) => {
+    const [isVisible, setIsVisible] = React.useState(false);
+    const selectRef = React.useRef(null);
+  
+    const toggleVisibility = () => {
+      if (isInteractable) {
+        setIsVisible(!isVisible);
+      }
+    };
+  
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    };
+  
+    React.useEffect(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
   
     const indicator = (
-      <div className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 ${localData.getTheme().borderMainColor} transform translate-x-1/3 translate-y-1/3 z-10`} />
-    )
-
-    return isInteractable ? (
-      <Popover>
-        <PopoverTrigger asChild >
-          {indicator}
-        </PopoverTrigger>
-        <PopoverContent style={{ backgroundColor: 'transparent', padding: '10px', borderRadius: '-1px' , borderColor: "transparent", borderBlockEndColor: "transparent" , border: "transparent", boxShadow: "none"}}>
-          <Select value={status} onValueChange={(e) => {handleStatusChange(e)
-            update(localData,serverData)
-          }
-          }>
-            <SelectTrigger className={` ${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}  >
-             <SelectValue content="Set status" />
-            </SelectTrigger>
-            
-            <SelectContent className={`${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}>
-              <SelectItem value={`online`}>Online</SelectItem>
-              <SelectItem value={`afk`}>AFK</SelectItem>
-              <SelectItem value={`dnd`}>Do Not Disturb</SelectItem>
-              <SelectItem value={`offline`}>Offline</SelectItem>
-            </SelectContent>
-          </Select>
-        </PopoverContent>
-      </Popover>
-    ) : indicator
-  }
+      <div
+        className={`w-4 h-4 rounded-full ${statusColors[status]} absolute bottom-0 right-0 border-2 ${localData.getTheme().borderMainColor} transform translate-x-1/3 translate-y-1/3 z-10`}
+        onClick={toggleVisibility}
+      />
+    );
+  
+    return (
+      <div className="relative">
+        {indicator}
+        {isVisible && isInteractable && (
+          <div
+            ref={selectRef}
+            className="fixed bottom-0 left-0 right-0 w-full bg-transparent p-4 z-50"
+            style={{
+              boxShadow: "0px -2px 10px rgba(0, 0, 0, 0)",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+            }}
+          >
+            <Select
+              value={status}
+              onValueChange={(e) => {
+                handleStatusChange(e);
+                update(localData, serverData);
+                setIsVisible(false); // Hide after selection
+              }}
+            >
+              <SelectTrigger
+                className={`w-full ${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo} p-3 text-center`}
+              >
+                <SelectValue content="Set status" />
+              </SelectTrigger>
+  
+              <SelectContent
+                className={`${localData.getTheme().mainColor} rounded-md border-transparent ${localData.getTheme().fullTextColorStyleTwo}`}
+              >
+                <SelectItem value={`online`}>Online</SelectItem>
+                <SelectItem value={`afk`}>AFK</SelectItem>
+                <SelectItem value={`dnd`}>Do Not Disturb</SelectItem>
+                <SelectItem value={`offline`}>Offline</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+    );
+  };
+  
+  
   const MbtiOverlay = ({ mbti }) => (
     <div
       className={`absolute inset-0 rounded-full border-2 z-0`}
-      style={{ borderColor: mbtiColors[mbti] || "transparent" }}
+      style={{ borderColor: MBTI.MBTIS[mbti].color  }}
     />
   );
   
@@ -125,7 +163,7 @@ export default function Component() {
         const response = await fetch("https://api.ipify.org?format=json");
         const data = await response.json();
         localData.setUserIp(data.ip);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error fetching IP:", error);
         localData.setUserIp("Unable to fetch IP");
       }
@@ -445,9 +483,11 @@ export default function Component() {
           <header className={`text-xl font-bold ${localData.getTheme().textColor}`}>
             {localData.getTittle()}
           </header>
-          <Avatar className={`w-8 h-8`}>
+          <Avatar className={`w-8 h-8 overflow-visible`}>
             <AvatarImage src={`${localData.getUser().getAvatar()}`} alt="User" />
             <AvatarFallback>{localData.getUser().getName()}</AvatarFallback>
+              <StatusIndicator status={localData.getUser().getStatus()} />
+              <MbtiOverlay mbti={localData.getUser().getMbti()} />
           </Avatar>
         </header>
 

@@ -1,6 +1,7 @@
 export type ThemeColors = {
     placeholderWither : string;  
     fullTextColor : string;
+    subTextColor : string;
     fillTextColor : string;
     fullTextColorStyleTwo: string;
     fullTextColorStyleThree: string;
